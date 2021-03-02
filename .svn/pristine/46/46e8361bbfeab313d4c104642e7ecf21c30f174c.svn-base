@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.order.ShopTransLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.order.ShopTransLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pay_type" property="payType" jdbcType="INTEGER" />
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+    <result column="trans_id" property="transId" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pay_type, order_sn, trans_id, add_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_trans_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.weking.model.shop.order.ShopTransLog" >
+    insert into shop_trans_log (id, pay_type, order_sn, 
+      trans_id, add_time)
+    values (#{id,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{orderSn,jdbcType=VARCHAR}, 
+      #{transId,jdbcType=VARCHAR}, #{addTime,jdbcType=BIGINT})
+  </insert>
+  <select id="selectCountByTransId" resultType="int">
+    select count(*)
+    from shop_trans_log
+    where trans_id = #{transId,jdbcType=VARCHAR}
+  </select>
+</mapper>

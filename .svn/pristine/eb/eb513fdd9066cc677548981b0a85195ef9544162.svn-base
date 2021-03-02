@@ -1,0 +1,46 @@
+package com.weking.service.admin;
+
+import com.weking.cache.WKCache;
+import com.weking.core.ResultCode;
+import com.weking.service.pay.PayService;
+import com.wekingframework.comm.LibServiceBase;
+import com.wekingframework.core.LibSysUtils;
+import net.sf.json.JSONObject;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+
+
+/**
+ * Created by zhb on 2017/8/24.
+ * 后台管理
+ */
+@Service("adminService")
+public class AdminService extends LibServiceBase {
+
+    @Resource
+    private PayService payService;
+
+    public JSONObject updateRecPostList(int user_id, int post_id, int sorts) {
+        System.out.println(String.format("----- user_id:%s,post_id:%s,sorts:%s", user_id, post_id, sorts));
+        JSONObject result = LibSysUtils.getResultJSON(ResultCode.success);
+        if (post_id != 0 && user_id != 0) {
+            WKCache.addRecommendPostList(post_id,sorts);
+          /*  WKCache.addRecommendPostUserList(user_id, sorts);
+            WKCache.addUserRecommendPost(user_id, post_id);*/
+        }
+        return result;
+    }
+
+    public JSONObject updateVipLevel(int user_id, int buy_emo) {
+        System.out.println(String.format("----- user_id:%s,post_id:%s", user_id, buy_emo));
+        JSONObject result = LibSysUtils.getResultJSON(ResultCode.success);
+        if (buy_emo != 0 && user_id != 0) {
+            payService.addCache(buy_emo,user_id);
+        }
+        return result;
+    }
+
+
+
+}

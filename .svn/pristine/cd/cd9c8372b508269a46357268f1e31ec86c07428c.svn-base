@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.commission.CommissionMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.commission.Commission" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="live_id" property="liveId" jdbcType="INTEGER" />
+    <result column="game_type" property="gameType" jdbcType="TINYINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="rule" property="rule" jdbcType="VARCHAR" />
+    <result column="bet_num" property="betNum" jdbcType="INTEGER" />
+    <result column="win_num" property="winNum" jdbcType="INTEGER" />
+    <result column="commission" property="commission" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, live_id, game_type, user_id, rule, bet_num, win_num, commission, add_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_game_commission
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_game_commission
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertByBatch" parameterType="java.util.List">
+    insert into wk_game_commission (live_id, game_type,
+    user_id, rule, bet_num,
+    win_num, commission, add_time
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.liveId,jdbcType=INTEGER}, #{item.gameType,jdbcType=TINYINT},
+      #{item.userId,jdbcType=INTEGER}, #{item.rule,jdbcType=VARCHAR}, #{item.betNum,jdbcType=INTEGER},
+      #{item.winNum,jdbcType=INTEGER}, #{item.commission,jdbcType=INTEGER}, #{item.addTime,jdbcType=BIGINT}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="insert" parameterType="com.weking.model.commission.Commission" >
+    insert into wk_game_commission (live_id, game_type,
+      user_id, rule, bet_num, 
+      win_num, commission, add_time
+      )
+    values (#{liveId,jdbcType=INTEGER}, #{gameType,jdbcType=TINYINT},
+      #{userId,jdbcType=INTEGER}, #{rule,jdbcType=VARCHAR}, #{betNum,jdbcType=INTEGER}, 
+      #{winNum,jdbcType=INTEGER}, #{commission,jdbcType=INTEGER}, #{addTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.commission.Commission" >
+    insert into wk_game_commission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="liveId != null" >
+        live_id,
+      </if>
+      <if test="gameType != null" >
+        game_type,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="rule != null" >
+        rule,
+      </if>
+      <if test="betNum != null" >
+        bet_num,
+      </if>
+      <if test="winNum != null" >
+        win_num,
+      </if>
+      <if test="commission != null" >
+        commission,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="liveId != null" >
+        #{liveId,jdbcType=INTEGER},
+      </if>
+      <if test="gameType != null" >
+        #{gameType,jdbcType=TINYINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rule != null" >
+        #{rule,jdbcType=VARCHAR},
+      </if>
+      <if test="betNum != null" >
+        #{betNum,jdbcType=INTEGER},
+      </if>
+      <if test="winNum != null" >
+        #{winNum,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null" >
+        #{commission,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.commission.Commission" >
+    update wk_game_commission
+    <set >
+      <if test="liveId != null" >
+        live_id = #{liveId,jdbcType=INTEGER},
+      </if>
+      <if test="gameType != null" >
+        game_type = #{gameType,jdbcType=TINYINT},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rule != null" >
+        rule = #{rule,jdbcType=VARCHAR},
+      </if>
+      <if test="betNum != null" >
+        bet_num = #{betNum,jdbcType=INTEGER},
+      </if>
+      <if test="winNum != null" >
+        win_num = #{winNum,jdbcType=INTEGER},
+      </if>
+      <if test="commission != null" >
+        commission = #{commission,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.commission.Commission" >
+    update wk_game_commission
+    set live_id = #{liveId,jdbcType=INTEGER},
+      game_type = #{gameType,jdbcType=TINYINT},
+      user_id = #{userId,jdbcType=INTEGER},
+      rule = #{rule,jdbcType=VARCHAR},
+      bet_num = #{betNum,jdbcType=INTEGER},
+      win_num = #{winNum,jdbcType=INTEGER},
+      commission = #{commission,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.account.UserDataMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.account.UserData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="data_key" property="dataKey" jdbcType="VARCHAR" />
+    <result column="data_value" property="dataValue" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, data_key, data_value, add_time
+  </sql>
+  <select id="selectDataValueListByUserIdAndDataKey" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from wk_user_data
+    where user_id = #{userId,jdbcType=INTEGER} and data_key = #{dataKey} AND is_del = 0 ORDER BY sort DESC
+    <if test="count != 0">
+      limit #{count}
+    </if>
+  </select>
+
+  <select id="selectCountByUserIdAndDataKey" resultType="int" >
+    select count(*)
+    from wk_user_data
+    where user_id = #{userId,jdbcType=INTEGER} and data_key = #{dataKey}
+  </select>
+
+    <select id="findDataValueByUserIdAndDataKey" resultType="String" >
+        select data_value
+        from wk_user_data
+        where user_id = #{userId,jdbcType=INTEGER} and data_key = #{dataKey} ORDER BY id DESC limit 1
+    </select>
+
+  <delete id="deleteByPrimaryKey" >
+    delete from wk_user_data
+    where id = #{id,jdbcType=INTEGER} AND user_id = #{userId}
+  </delete>
+
+  <insert id="batchInsert" parameterType="com.weking.model.account.UserData" >
+    insert into wk_user_data (user_id, data_key,
+      data_value, add_time) values
+    <foreach collection ="list" item="data" index= "index" separator =",">
+     (#{data.userId,jdbcType=INTEGER}, #{data.dataKey,jdbcType=VARCHAR},
+      #{data.dataValue,jdbcType=VARCHAR}, #{data.addTime,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.weking.model.account.UserData" >
+    insert into wk_user_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="dataKey != null" >
+        data_key,
+      </if>
+      <if test="dataValue != null" >
+        data_value,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="dataKey != null" >
+        #{dataKey,jdbcType=VARCHAR},
+      </if>
+      <if test="dataValue != null" >
+        #{dataValue,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.account.UserData" >
+    update wk_user_data
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="dataKey != null" >
+        data_key = #{dataKey,jdbcType=VARCHAR},
+      </if>
+      <if test="dataValue != null" >
+        data_value = #{dataValue,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateDataValueByIdAndUserId" >
+    update wk_user_data
+    set data_value = #{dataValue,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER} AND user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

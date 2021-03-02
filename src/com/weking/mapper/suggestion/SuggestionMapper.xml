@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.suggestion.SuggestionMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.suggestion.Suggestion" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="suggesstion" property="suggesstion" jdbcType="VARCHAR" />
+    <result column="sugg_time" property="suggTime" jdbcType="VARCHAR" />
+    <result column="sugg_pic" property="suggPic" jdbcType="VARCHAR" />
+    <result column="contact_num" property="contactNum" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, suggesstion, sugg_time, sugg_pic, contact_num
+  </sql>
+  <insert id="insert" parameterType="com.weking.model.suggestion.Suggestion" >
+    insert into wk_suggestion (id, user_id, suggesstion, 
+      sugg_time, sugg_pic, contact_num
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{suggesstion,jdbcType=VARCHAR}, 
+      #{suggTime,jdbcType=VARCHAR}, #{suggPic,jdbcType=VARCHAR}, #{contactNum,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

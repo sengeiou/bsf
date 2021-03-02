@@ -1,0 +1,123 @@
+package com.weking.core;
+
+import com.wekingframework.core.LibDateUtils;
+import com.wekingframework.core.LibProperties;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
+
+public class TimerManager {
+
+    public TimerManager() throws Exception {
+        //从配置文件中获取配置信息，有些需要修改的参数，配置在配置文件中的话，会更加灵活，不用去频繁修改代码
+        long period = Long.parseLong(LibProperties.getConfig("weking.config.timer.exec.period"));
+        Calendar calendar = Calendar.getInstance(); // 获取当前时间
+        calendar.add(Calendar.SECOND, 15);//启动15秒后执行
+        Date date = calendar.getTime(); // 第一次执行定时任务的时间
+        Timer timer = new Timer();
+        PushMessageTimerTask task = new PushMessageTimerTask();//房间心跳
+        timer.schedule(task, date, period);
+
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                BackgroundProvider.putAllNotConfirmAppoint();
+            }
+        }, date, 12 * 60 * 60 * 1000);
+
+        // 每天晚八点任务
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH), 20, 0, 0);
+        date = calendar.getTime();
+        if (date.before(LibDateUtils.getDateTime())) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        date = calendar.getTime();
+//        System.out.println(LibDateUtils.dateTime2LibDateTime(date,"yyyyMMddHHmmss"));
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                BackgroundProvider.liveRoomGiftPush();
+            }
+        }, date, 24 * 60 * 60 * 1000);
+
+
+        // 每天晚九点任务
+        calendar = Calendar.getInstance(); // 获取当前时间
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH), 21, 0, 0);
+        date = calendar.getTime();
+        if (date.before(LibDateUtils.getDateTime())){
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        date = calendar.getTime();
+//        calendar = Calendar.getInstance(); // 获取当前时间
+//        calendar.add(Calendar.SECOND, 10);
+//        date = calendar.getTime(); // 第一次执行定时任务的时间
+//        System.out.println(LibDateUtils.dateTime2LibDateTime(date,"yyyyMMddHHmmss"));
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                BackgroundProvider.todayNoPostPush();
+            }
+        }, date, 24 * 60 * 60 * 1000);
+//        }, date, 15 * 60 * 1000);
+
+
+
+        // 每天凌晨任务  平台分红
+        calendar = Calendar.getInstance(); // 获取当前时间
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        date = calendar.getTime();
+        if (date.before(LibDateUtils.getDateTime())){
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+//        calendar = Calendar.getInstance(); // 获取当前时间
+//        calendar.add(Calendar.SECOND, 10);
+        date = calendar.getTime(); // 第一次执行定时任务的时间
+        System.out.println(LibDateUtils.dateTime2LibDateTime(date,"yyyyMMddHHmmss"));
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                BackgroundProvider.userDividendSCA();
+            }
+        }, date,  24 * 60 * 60 * 1000);
+
+      //本地测试
+     /*  calendar = Calendar.getInstance(); // 获取当前时间
+        calendar.add(Calendar.SECOND, 10);
+        date = calendar.getTime(); // 第一次执行定时任务的时间
+        System.out.println(LibDateUtils.dateTime2LibDateTime(date,"yyyyMMddHHmmss"));
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                BackgroundProvider.userDividendSCA();
+            }
+        }, date,  5 * 60 * 1000);*/
+
+
+        //凌晨2点任务 挖矿奖励
+        calendar = Calendar.getInstance(); // 获取当前时间
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH), 2, 0, 0);
+        date = calendar.getTime();
+        if (date.before(LibDateUtils.getDateTime())){
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+//        calendar = Calendar.getInstance(); // 获取当前时间
+//        calendar.add(Calendar.SECOND, 10);
+        date = calendar.getTime(); // 第一次执行定时任务的时间
+        System.out.println(LibDateUtils.dateTime2LibDateTime(date,"yyyyMMddHHmmss"));
+        timer.schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                BackgroundProvider.userMiningReward();
+            }
+        }, date, 24 * 60 * 60 * 1000);
+
+    }
+
+
+}

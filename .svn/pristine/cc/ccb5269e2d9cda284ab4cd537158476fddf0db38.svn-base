@@ -1,0 +1,55 @@
+package com.weking.core.payNow;
+
+import com.weking.cache.WKCache;
+import com.weking.core.C;
+import com.wekingframework.core.LibSysUtils;
+import net.sf.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+public class PayNowUtil {
+
+    private static final String webNo;
+    private static final String receiverTel;
+    private static final String ECPlatform;
+    private static final String pay_code;
+
+
+    static {
+        webNo = WKCache.get_system_cache(C.WKSystemCacheField.payNow_webNo);
+        receiverTel = WKCache.get_system_cache(C.WKSystemCacheField.payNow_receiverTel);
+        ECPlatform = WKCache.get_system_cache(C.WKSystemCacheField.payNow_ECPlatform);
+        pay_code = WKCache.get_system_cache(C.WKSystemCacheField.pay_code);
+    }
+
+    public static JSONObject getPayNowData(String orderSn, int amount, String user_name, String email,String payType,int buy_num) {
+        JSONObject obj = new JSONObject();
+        String PassCode = webNo + orderSn + amount + pay_code;
+        PassCode = ShaPayNow.getSha1(PassCode);
+        try {
+            obj.put("webNo", URLEncoder.encode(webNo, "UTF-8"));
+            obj.put("PassCode", URLEncoder.encode(PassCode.toUpperCase(), "UTF-8"));
+            obj.put("ReceiverName", URLEncoder.encode(user_name, "UTF-8"));
+            obj.put("ReceiverID", URLEncoder.encode(email, "UTF-8"));
+            obj.put("ReceiverTel", URLEncoder.encode(receiverTel, "UTF-8"));
+            obj.put("OrderNo", URLEncoder.encode(orderSn, "UTF-8"));
+            obj.put("ECPlatform", URLEncoder.encode(ECPlatform, "UTF-8"));
+            obj.put("TotalPrice", URLEncoder.encode(LibSysUtils.toString(amount), "UTF-8"));
+            obj.put("Note1", URLEncoder.encode(LibSysUtils.toString(buy_num), "UTF-8"));
+            obj.put("OrderInfo", URLEncoder.encode("EMO", "UTF-8"));
+            obj.put("PayType", URLEncoder.encode(payType, "UTF-8"));
+            //if(payType.equals("03")){
+            obj.put("AtmRespost", URLEncoder.encode("1", "UTF-8"));
+            //}
+
+
+            return obj;
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
+
+    }
+
+
+}

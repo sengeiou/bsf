@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.account.AccountInfoMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.account.AccountInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="wx_num" property="wxNum" jdbcType="VARCHAR"/>
+        <result column="qq_num" property="qqNum" jdbcType="VARCHAR"/>
+        <result column="wb_num" property="wbNum" jdbcType="VARCHAR"/>
+        <result column="fb_num" property="fbNum" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="lng" property="lng" jdbcType="DOUBLE"/>
+        <result column="lat" property="lat" jdbcType="DOUBLE"/>
+        <result column="pichead_url" property="picheadUrl" jdbcType="VARCHAR"/>
+        <result column="birthday" property="birthday" jdbcType="INTEGER"/>
+        <result column="signiture" property="signiture" jdbcType="VARCHAR"/>
+        <result column="reg_time" property="regTime" jdbcType="BIGINT"/>
+        <result column="cid" property="clientid" jdbcType="VARCHAR"/>
+        <result column="openid" property="openid" jdbcType="VARCHAR"/>
+        <result column="devicetoken" property="devicetoken" jdbcType="VARCHAR"/>
+        <result column="invite_code" property="inviteCode" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="isblack" property="isblack" jdbcType="INTEGER"/>
+        <result column="sorts" property="sorts" jdbcType="INTEGER"/>
+        <result column="area_code" property="areaCode" jdbcType="INTEGER"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="experience" property="experience" jdbcType="INTEGER"/>
+        <result column="enable" property="enable" jdbcType="TINYINT"/>
+        <result column="google_num" property="googleNum" jdbcType="VARCHAR"/>
+        <result column="kakao_num" property="kakao_num" jdbcType="VARCHAR"/>
+        <result column="twitter_num" property="twitterNum" jdbcType="VARCHAR"/>
+        <result column="apple_num" property="apple_num" jdbcType="VARCHAR"/>
+        <result column="line_num" property="line_num" jdbcType="VARCHAR"/>
+        <result column="anchor_level" property="anchor_level" jdbcType="TINYINT"/>
+        <result column="anchor_experience" property="anchor_experience" jdbcType="INTEGER"/>
+        <result column="role" property="role" jdbcType="TINYINT"/>
+        <result column="wallet_currency" property="wallet_currency" jdbcType="VARCHAR"/>
+        <result column="hots" property="hots" jdbcType="INTEGER"/>
+        <result column="post_hots" property="post_hots" jdbcType="INTEGER"/>
+        <result column="is_official" property="is_official" jdbcType="INTEGER"/>
+        <result column="guild_id" property="guild_id" jdbcType="INTEGER"/>
+        <result column="ratio" property="ratio" jdbcType="DECIMAL"/>
+        <result column="withdraw_rate" property="withdraw_rate" jdbcType="DOUBLE"/>
+        <result column="is_update_nickname" property="is_update_nickname" jdbcType="TINYINT"/>
+        <result column="user_name" property="user_name" jdbcType="VARCHAR" />
+        <result column="user_email" property="user_email" jdbcType="VARCHAR" />
+        <result column="vip_level" property="vip_level" jdbcType="INTEGER"/>
+        <result column="vip_experience" property="vip_experience" jdbcType="INTEGER"/>
+        <result column="cdn_option" property="cdn_option" jdbcType="INTEGER"/>
+    </resultMap>
+
+<sql id="Base_Column_List">
+    id, phone,email,fb_num, account, password, wx_num, qq_num, wb_num,fb_num,google_num,kakao_num, nickname,
+    twitter_num,parent_id,sex, address, pichead_url, birthday, signiture, reg_time,cid,openid,devicetoken,
+    invite_code,isblack,`level`,experience,anchor_level,anchor_experience,sorts,role,wallet_currency,hots,post_hots,is_official,
+    guild_id,ratio,withdraw_rate,is_update_nickname,user_name,user_email,vip_level,vip_experience,apple_num,line_num,cdn_option
+</sql>
+
+<select id="selectByAccountId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List"/>
+    from wk_user_info
+    where account = #{account,jdbcType=VARCHAR}
+</select>
+
+    <select id="findUserMapByAccount" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_user_info
+        where account = #{account,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByInviteCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where invite_code = #{inviteCode} AND enable = 1
+    </select>
+
+    <update id="updateParentIdByUserId" parameterType="java.lang.Integer">
+        UPDATE wk_user_info SET parent_id = #{parentId} WHERE id = #{userId} AND parent_id = 0
+    </update>
+
+    <select id="selectInviteCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select COUNT(*) from wk_user_info where parent_id = #{userId} AND enable = 1
+    </select>
+
+    <select id="selectInviteList" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select <include refid="Base_Column_List"/> from wk_user_info where parent_id = #{userId} AND enable = 1 limit #{index},#{count}
+    </select>
+
+    <select id="findUserIdByAccount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where account = #{account} AND enable = 1
+    </select>
+
+    <select id="getFans" resultMap="BaseResultMap">
+        select b.id,b.account, b.nickname,b.sex, b.address, b.pichead_url, b.birthday, b.signiture,
+        b.reg_time,b.cid,b.devicetoken,b.level
+        from wk_follow a
+        inner JOIN wk_user_info b on a.follow_id=b.id
+        where a.befollow_id=#{user_id} AND b.enable = 1
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getStarts" resultMap="BaseResultMap">
+        select b.id,b.account, b.nickname,b.sex, b.address, b.pichead_url, b.birthday, b.signiture,
+        b.reg_time,b.cid,b.devicetoken,b.level
+        from wk_follow a
+        inner JOIN wk_user_info b on a.befollow_id=b.id
+        where a.follow_id=#{user_id} AND b.enable = 1
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="batchSelectUsers" parameterType="java.util.Set" resultMap="BaseResultMap">
+        select id,account
+        from wk_user_info where account in
+        <foreach collection="set" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+  <select id="verifyAccountId" resultType="int" parameterType="java.lang.String">
+     select count(*)
+    from wk_user_info
+    where account = #{account,jdbcType=VARCHAR}
+  </select>
+
+    <select id="verifyEmail" resultType="int" parameterType="java.lang.String">
+        select  count(*)
+        from wk_user_info
+        where email = #{email,jdbcType=VARCHAR}
+    </select>
+
+    <select id="loginByPhone" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where phone = #{phone,jdbcType=VARCHAR}
+        <if test="password != null and password != ''">
+            AND password =#{password,jdbcType=VARCHAR}
+        </if>
+         AND enable = 1 limit 1
+    </select>
+    <select id="findByPassword" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where id = #{userId,jdbcType=INTEGER} AND password = #{password,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+    <select id="loginByWxNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where wx_num = #{wxNum,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+    <select id="loginByEmail" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where email = #{email,jdbcType=VARCHAR} and password =#{password,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+    <select id="loginByFacebook" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where fb_num = #{fbNum,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+    <select id="loginByGoogle" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where google_num = #{googleNum,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+    <select id="loginByKakao" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where kakao_num = #{kakaoNum,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+    <select id="loginByTwitter" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where twitter_num = #{twitterNum,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+
+    <select id="loginByAppleNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where apple_num = #{apple_num,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+
+    <select id="loginByLineNum" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id from wk_user_info where line_num = #{line_num,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_user_info
+        where id = #{id,jdbcType=INTEGER} AND enable=1
+    </select>
+
+    <select id="findUserIdByNickname" resultType="int" parameterType="java.lang.Integer">
+        select id from wk_user_info
+        where nickname = #{nickname,jdbcType=VARCHAR} AND enable = 1 limit 1
+    </select>
+
+    <select id="selectByThirdNum" resultType="int" parameterType="java.lang.Integer">
+        select count(1)
+        from wk_user_info where 1
+        <if test="phone != null">
+            AND phone = #{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="areaCode != null">
+            AND area_code = #{areaCode,jdbcType=INTEGER}
+        </if>
+        <if test="email != null">
+            AND email = #{email,jdbcType=VARCHAR}
+        </if>
+        <if test="wxNum != null">
+            AND wx_num = #{wxNum,jdbcType=VARCHAR}
+        </if>
+        <if test="kakao_num != null">
+            AND kakao_num = #{kakao_num,jdbcType=VARCHAR}
+        </if>
+        <if test="fbNum != null">
+           AND fb_num = #{fbNum,jdbcType=VARCHAR}
+        </if>
+        <if test="googleNum != null">
+            AND google_num = #{googleNum,jdbcType=VARCHAR}
+        </if>
+        <if test="twitterNum != null">
+            AND twitter_num = #{twitterNum,jdbcType=VARCHAR}
+        </if>
+        AND enable = 1
+    </select>
+
+    <insert id="insertSelective" parameterType="com.weking.model.account.AccountInfo" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into wk_user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="wxNum != null">
+                wx_num,
+            </if>
+            <if test="qqNum != null">
+                qq_num,
+            </if>
+            <if test="wbNum != null">
+                wb_num,
+            </if>
+            <if test="fbNum != null">
+                fb_num,
+            </if>
+            <if test="apple_num != null">
+                apple_num,
+            </if>
+            <if test="line_num != null">
+                line_num,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="address != null">
+                address,
+            </if>
+            <if test="picheadUrl != null">
+                pichead_url,
+            </if>
+            <if test="birthday != null">
+                birthday,
+            </if>
+            <if test="signiture != null">
+                signiture,
+            </if>
+            <if test="regTime != null">
+                reg_time,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="inviteCode != null">
+                invite_code,
+            </if>
+            <if test="kakao_num != null">
+                kakao_num,
+            </if>
+            <if test="googleNum != null">
+                google_num,
+            </if>
+            <if test="twitterNum != null">
+                twitter_num,
+            </if>
+            <if test="anchor_level != null">
+                anchor_level,
+            </if>
+            <if test="areaCode != null">
+                area_code,
+            </if>
+            <if test="wallet_currency != null">
+                wallet_currency,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="wxNum != null">
+                #{wxNum,jdbcType=VARCHAR},
+            </if>
+            <if test="qqNum != null">
+                #{qqNum,jdbcType=VARCHAR},
+            </if>
+            <if test="wbNum != null">
+                #{wbNum,jdbcType=VARCHAR},
+            </if>
+            <if test="fbNum != null">
+                #{fbNum,jdbcType=VARCHAR},
+            </if>
+            <if test="apple_num != null">
+                #{apple_num,jdbcType=VARCHAR},
+            </if>
+             <if test="line_num != null">
+                #{line_num,jdbcType=VARCHAR},
+            </if>
+
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=SMALLINT},
+            </if>
+            <if test="address != null">
+                #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="picheadUrl != null">
+                #{picheadUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                #{birthday,jdbcType=INTEGER},
+            </if>
+            <if test="signiture != null">
+                #{signiture,jdbcType=VARCHAR},
+            </if>
+            <if test="regTime != null">
+                #{regTime,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="inviteCode != null">
+                #{inviteCode,jdbcType=VARCHAR},
+            </if>
+            <if test="kakao_num != null">
+                #{kakao_num,jdbcType=VARCHAR},
+            </if>
+            <if test="googleNum != null">
+                #{googleNum,jdbcType=VARCHAR},
+            </if>
+            <if test="twitterNum != null">
+                #{twitterNum,jdbcType=VARCHAR},
+            </if>
+            <if test="anchor_level != null">
+                #{anchor_level,jdbcType=SMALLINT},
+            </if>
+            <if test="areaCode != null">
+                #{areaCode,jdbcType=SMALLINT},
+            </if>
+            <if test="wallet_currency != null">
+                #{wallet_currency,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateGetuiInfo" parameterType="java.lang.String">
+        update wk_user_info
+        <set>
+            <if test="cid != null">
+                cid = #{cid,jdbcType=VARCHAR},
+            </if>
+            <if test="devicetoken != null">
+                devicetoken = #{devicetoken,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updatePwdByPhone" parameterType="java.lang.String">
+        update wk_user_info SET password = #{password,jdbcType=VARCHAR}
+        where phone = #{phone,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateRatioByUserid" parameterType="java.lang.String">
+        update wk_user_info SET ratio = #{ratio,jdbcType=DECIMAL}
+        where id = #{userId,jdbcType=INTEGER}
+    </update>
+
+    <update id="clearGetuiInfo" parameterType="java.lang.String">
+        update wk_user_info
+        set cid = "",devicetoken = "" where cid = #{cid,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.account.AccountInfo">
+        update wk_user_info
+        <set>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="wxNum != null">
+                wx_num = #{wxNum,jdbcType=VARCHAR},
+            </if>
+            <if test="qqNum != null">
+                qq_num = #{qqNum,jdbcType=VARCHAR},
+            </if>
+            <if test="wbNum != null">
+                wb_num = #{wbNum,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=SMALLINT},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="picheadUrl != null">
+                pichead_url = #{picheadUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=INTEGER},
+            </if>
+            <if test="signiture != null">
+                signiture = #{signiture,jdbcType=VARCHAR},
+            </if>
+            <if test="clientid != null">
+                cid = #{clientid,jdbcType=VARCHAR},
+            </if>
+            <if test="openid != null">
+                openid = #{openid,jdbcType=VARCHAR},
+            </if>
+            <if test="devicetoken != null">
+                devicetoken = #{devicetoken,jdbcType=VARCHAR},
+            </if>
+            <if test="kakao_num != null">
+                kakao_num = #{kakao_num,jdbcType=VARCHAR},
+            </if>
+            <if test="lng != null">
+                lng = #{lng,jdbcType=DOUBLE},
+            </if>
+            <if test="lat != null">
+                lat = #{lat,jdbcType=DOUBLE},
+            </if>
+            <if test="langCode != null">
+                lang_code = #{langCode,jdbcType=VARCHAR},
+            </if>
+            <if test="anchor_level != null">
+                anchor_level = #{anchor_level,jdbcType=SMALLINT},
+            </if>
+            <if test="wallet_currency != null">
+                wallet_currency = #{wallet_currency,jdbcType=VARCHAR},
+            </if>
+            <if test="is_update_nickname != null">
+                is_update_nickname = #{is_update_nickname,jdbcType=SMALLINT},
+            </if>
+            <if test="user_name != null">
+                user_name = #{user_name,jdbcType=VARCHAR},
+            </if>
+            <if test="user_email != null">
+                user_email = #{user_email,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateExperience" parameterType="java.lang.String">
+        update wk_user_info
+        <set>
+            <if test="experience != null">
+                experience = #{experience,jdbcType=INTEGER},
+            </if>
+            <if test="level != null">
+                `level` = #{level,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{userId,jdbcType=INTEGER}
+    </update>
+
+
+    <update id="updateAnchorExperience" parameterType="java.lang.String">
+        update wk_user_info
+        <set>
+            <if test="anchor_experience != null">
+                anchor_experience = #{anchor_experience,jdbcType=INTEGER},
+            </if>
+            <if test="anchor_level != null">
+                `anchor_level` = #{anchor_level,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{userId,jdbcType=INTEGER}
+    </update>
+
+
+    <update id="updateVipExperience" parameterType="java.lang.String">
+        update wk_user_info
+        <set>
+            <if test="vip_experience != null">
+                vip_experience = #{vip_experience,jdbcType=INTEGER},
+            </if>
+            <if test="vip_level != null">
+                `vip_level` = #{vip_level,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{userId,jdbcType=INTEGER}
+    </update>
+
+
+    <select id="searchAcount" resultMap="BaseResultMap" parameterType="com.weking.model.account.AccountInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_user_info where (
+        account like CONCAT('${account}','%' )
+        or
+        nickname like CONCAT('${account}','%' )) order by  anchor_level desc
+        limit
+        #{index},#{count}
+    </select>
+
+    <update id="updateUserNumById" parameterType="com.weking.model.account.AccountInfo">
+        update wk_user_info
+        <set>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="areaCode != null">
+                area_code = #{areaCode,jdbcType=INTEGER},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="wxNum != null">
+                wx_num = #{wxNum,jdbcType=VARCHAR},
+            </if>
+            <if test="qqNum != null">
+                qq_num = #{qqNum,jdbcType=VARCHAR},
+            </if>
+            <if test="wbNum != null">
+                wb_num = #{wbNum,jdbcType=VARCHAR},
+            </if>
+            <if test="kakao_num != null">
+                kakao_num = #{kakao_num,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="fbNum != null">
+                fb_num = #{fbNum,jdbcType=VARCHAR},
+            </if>
+            <if test="googleNum != null">
+                google_num = #{googleNum,jdbcType=VARCHAR},
+            </if>
+            <if test="twitterNum != null">
+                twitter_num = #{twitterNum,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="cancelBingByUserId" parameterType="com.weking.model.account.AccountInfo">
+        update wk_user_info
+        <set>
+            <if test="wxNum != null">
+                wx_num = "",
+            </if>
+            <if test="qqNum != null">
+                qq_num = "",
+            </if>
+            <if test="wbNum != null">
+                wb_num = "",
+            </if>
+            <if test="kakao_num != null">
+                kakao_num = "",
+            </if>
+            <if test="email != null">
+                email = "",
+            </if>
+            <if test="fbNum != null">
+                fb_num = "",
+            </if>
+            <if test="googleNum != null">
+                google_num = "",
+            </if>
+            <if test="twitterNum != null">
+                twitter_num = "",
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="delUser" parameterType="java.lang.Integer">
+        update wk_user_info SET enable = 0
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectAnchorList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from wk_user_info u
+        where u.isblack = 1 and u.sorts > 0 AND u.enable = 1 AND id NOT IN ( SELECT beuser_id FROM wk_black_log
+        WHERE user_id=#{userId,jdbcType=INTEGER} GROUP BY beuser_id )
+        order by sorts desc limit #{offset},#{limit}
+    </select>
+
+    <select id="selectRecommendAnchorList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from wk_user_info u
+        where u.isblack = 1 and u.hots > 0 AND u.enable = 1
+        order by sorts desc limit #{offset},#{limit}
+    </select>
+
+    <select id="findUserInfoByUserId" resultType="map" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from wk_user_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectNormalUserList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from wk_user_info
+        where isblack = 1 AND enable = 1 AND  is_robot = 0
+        ORDER BY id DESC
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="selectUserListByLanguage" resultType="Map">
+       SELECT cid,devicetoken
+       FROM wk_user_info
+       WHERE isblack = 1 AND enable = 1 AND  is_robot = 0 AND cid != '' AND lang_code = #{lang}
+       limit #{offset},#{limit}
+    </select>
+
+</mapper>

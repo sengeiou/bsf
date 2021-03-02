@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.comm.CommAreaMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.comm.CommArea">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="internal_code" property="internalCode" jdbcType="VARCHAR"/>
+        <result column="postcode" property="postcode" jdbcType="VARCHAR"/>
+        <result column="sort_id" property="sortId" jdbcType="INTEGER"/>
+        <result column="enable" property="enable" jdbcType="INTEGER"/>
+        <result column="zh_CN" property="zhCn" jdbcType="VARCHAR"/>
+        <result column="zh_TW" property="zhTw" jdbcType="VARCHAR"/>
+        <result column="en_US" property="enUs" jdbcType="VARCHAR"/>
+        <result column="ms" property="ms" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, parent_id, internal_code, postcode, sort_id, enable, zh_CN, zh_TW, en_US, ms
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_area
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wk_area
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.weking.model.comm.CommArea">
+    insert into wk_area (id, parent_id, internal_code, 
+      postcode, sort_id, enable, 
+      zh_CN, zh_TW, en_US, ms
+      )
+    values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{internalCode,jdbcType=VARCHAR}, 
+      #{postcode,jdbcType=VARCHAR}, #{sortId,jdbcType=INTEGER}, #{enable,jdbcType=INTEGER}, 
+      #{zhCn,jdbcType=VARCHAR}, #{zhTw,jdbcType=VARCHAR}, #{enUs,jdbcType=VARCHAR}, #{ms,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.weking.model.comm.CommArea">
+        insert into wk_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="internalCode != null">
+                internal_code,
+            </if>
+            <if test="postcode != null">
+                postcode,
+            </if>
+            <if test="sortId != null">
+                sort_id,
+            </if>
+            <if test="enable != null">
+                enable,
+            </if>
+            <if test="zhCn != null">
+                zh_CN,
+            </if>
+            <if test="zhTw != null">
+                zh_TW,
+            </if>
+            <if test="enUs != null">
+                en_US,
+            </if>
+            <if test="ms != null">
+                ms,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="internalCode != null">
+                #{internalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="postcode != null">
+                #{postcode,jdbcType=VARCHAR},
+            </if>
+            <if test="sortId != null">
+                #{sortId,jdbcType=INTEGER},
+            </if>
+            <if test="enable != null">
+                #{enable,jdbcType=INTEGER},
+            </if>
+            <if test="zhCn != null">
+                #{zhCn,jdbcType=VARCHAR},
+            </if>
+            <if test="zhTw != null">
+                #{zhTw,jdbcType=VARCHAR},
+            </if>
+            <if test="enUs != null">
+                #{enUs,jdbcType=VARCHAR},
+            </if>
+            <if test="ms != null">
+                #{ms,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.comm.CommArea">
+        update wk_area
+        <set>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="internalCode != null">
+                internal_code = #{internalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="postcode != null">
+                postcode = #{postcode,jdbcType=VARCHAR},
+            </if>
+            <if test="sortId != null">
+                sort_id = #{sortId,jdbcType=INTEGER},
+            </if>
+            <if test="enable != null">
+                enable = #{enable,jdbcType=INTEGER},
+            </if>
+            <if test="zhCn != null">
+                zh_CN = #{zhCn,jdbcType=VARCHAR},
+            </if>
+            <if test="zhTw != null">
+                zh_TW = #{zhTw,jdbcType=VARCHAR},
+            </if>
+            <if test="enUs != null">
+                en_US = #{enUs,jdbcType=VARCHAR},
+            </if>
+            <if test="ms != null">
+                ms = #{ms,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.weking.model.comm.CommArea">
+    update wk_area
+    set parent_id = #{parentId,jdbcType=INTEGER},
+      internal_code = #{internalCode,jdbcType=VARCHAR},
+      postcode = #{postcode,jdbcType=VARCHAR},
+      sort_id = #{sortId,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=INTEGER},
+      zh_CN = #{zhCn,jdbcType=VARCHAR},
+      zh_TW = #{zhTw,jdbcType=VARCHAR},
+      en_US = #{enUs,jdbcType=VARCHAR},
+      ms = #{ms,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+    select
+    id,${lang_code} as zh_CN
+    from wk_area
+    where parent_id = #{parentId} and enable =0 ORDER BY sort_id DESC
+  </select>
+
+    <select id="selectNameById" resultMap="BaseResultMap">
+    select
+    id,${lang_code} as zh_CN
+    from wk_area
+    where id = #{id}
+  </select>
+
+</mapper>

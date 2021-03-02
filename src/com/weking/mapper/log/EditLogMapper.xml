@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.EditLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.log.EditLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="edit_key" property="editKey" jdbcType="VARCHAR" />
+    <result column="edit_value" property="editValue" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, edit_key, edit_value, add_time
+  </sql>
+  <select id="findIdByUserId" resultType="int" parameterType="java.lang.Integer" >
+    select id from wk_edit_log
+    where user_id = #{userId,jdbcType=INTEGER} AND edit_key = #{editKey,jdbcType=VARCHAR}
+    <if test="addTime != null">
+      AND add_time > #{addTime}
+    </if>
+    limit 1
+  </select>
+  <insert id="insert" parameterType="com.weking.model.log.EditLog" >
+    insert into wk_edit_log (id, user_id, edit_key, 
+      edit_value, add_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{editKey,jdbcType=VARCHAR}, 
+      #{editValue,jdbcType=VARCHAR}, #{addTime,jdbcType=BIGINT})
+  </insert>
+</mapper>

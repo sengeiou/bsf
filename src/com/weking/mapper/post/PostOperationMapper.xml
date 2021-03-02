@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.post.PostOperationMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.post.PostOperation" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="post_id" property="postId" jdbcType="BIGINT" />
+    <result column="comment_user_id" property="commentUserId" jdbcType="BIGINT" />
+    <result column="comment_date" property="commentDate" jdbcType="BIGINT" />
+    <result column="comment_type" property="commentType" jdbcType="TINYINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, post_id, comment_user_id, comment_date, comment_type,content, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_post_operation
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.weking.model.post.PostOperation" >
+    insert into wk_post_operation (id, post_id, comment_user_id, 
+      comment_date, comment_type,content, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{postId,jdbcType=BIGINT}, #{commentUserId,jdbcType=BIGINT},
+      #{commentDate,jdbcType=BIGINT}, #{commentType,jdbcType=TINYINT}, #{content,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.post.PostOperation">
+    insert into wk_post_operation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="postId != null">
+        post_id,
+      </if>
+      <if test="commentUserId != null">
+        comment_user_id,
+      </if>
+      <if test="commentDate != null">
+        comment_date,
+      </if>
+      <if test="commentType != null">
+        comment_type,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="postId != null">
+        #{postId,jdbcType=BIGINT},
+      </if>
+      <if test="commentUserId != null">
+        #{commentUserId,jdbcType=BIGINT},
+      </if>
+      <if test="commentDate != null">
+        #{commentDate,jdbcType=BIGINT},
+      </if>
+      <if test="commentType != null">
+        #{commentType,jdbcType=TINYINT},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.post.PostOperation" >
+    update wk_post_operation
+    set post_id = #{postId,jdbcType=BIGINT},
+      comment_user_id = #{commentUserId,jdbcType=BIGINT},
+      comment_date = #{commentDate,jdbcType=BIGINT},
+      comment_type = #{commentType,jdbcType=TINYINT},
+      content = #{content,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="isLike" resultType="java.lang.Integer">
+    SELECT COUNT(*) as c from wk_post_operation where post_id=#{postId} and comment_user_id=#{userId} and comment_type=1
+  </select>
+
+  <select id="dislike" resultType="java.lang.Integer">
+    SELECT COUNT(*) as c from wk_post_operation where post_id=#{postId} and comment_user_id=#{userId} and comment_type=2
+  </select>
+
+  <delete id="deleteLikeByPostId">
+    delete from wk_post_operation
+    where post_id = #{postId} and comment_user_id=#{userId} and comment_type=1
+  </delete>
+
+  <select id="getOperationListByPostId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wk_post_operation
+    WHERE post_id = #{postId} AND status = 0
+    ORDER BY id ASC
+  </select>
+
+  <select id="getOperationListByPostIdAndType" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM wk_post_operation
+    WHERE post_id = #{postId} AND status = 0 and comment_type = #{type}
+    ORDER BY id ASC
+    LIMIT #{index},#{count}
+  </select>
+
+</mapper>

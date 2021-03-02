@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.vip.VipPrivilegeMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.vip.VipPrivilege" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="vip_level" property="vipLevel" jdbcType="INTEGER" />
+    <result column="buy_num" property="buyNum" jdbcType="INTEGER" />
+    <result column="privilege" property="privilege" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, vip_level, buy_num, privilege
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_vip_privilege
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_vip_privilege
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.vip.VipPrivilege" >
+    insert into wk_vip_privilege (id, vip_level, buy_num, 
+      privilege)
+    values (#{id,jdbcType=INTEGER}, #{vipLevel,jdbcType=INTEGER}, #{buyNum,jdbcType=INTEGER}, 
+      #{privilege,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.vip.VipPrivilege" >
+    insert into wk_vip_privilege
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="vipLevel != null" >
+        vip_level,
+      </if>
+      <if test="buyNum != null" >
+        buy_num,
+      </if>
+      <if test="privilege != null" >
+        privilege,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="vipLevel != null" >
+        #{vipLevel,jdbcType=INTEGER},
+      </if>
+      <if test="buyNum != null" >
+        #{buyNum,jdbcType=INTEGER},
+      </if>
+      <if test="privilege != null" >
+        #{privilege,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.vip.VipPrivilege" >
+    update wk_vip_privilege
+    <set >
+      <if test="vipLevel != null" >
+        vip_level = #{vipLevel,jdbcType=INTEGER},
+      </if>
+      <if test="buyNum != null" >
+        buy_num = #{buyNum,jdbcType=INTEGER},
+      </if>
+      <if test="privilege != null" >
+        privilege = #{privilege,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.vip.VipPrivilege" >
+    update wk_vip_privilege
+    set vip_level = #{vipLevel,jdbcType=INTEGER},
+      buy_num = #{buyNum,jdbcType=INTEGER},
+      privilege = #{privilege,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllVipPrivilege" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_vip_privilege order by vip_level ;
+
+  </select>
+
+
+</mapper>

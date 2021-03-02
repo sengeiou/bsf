@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.live.UserChatMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.live.UserChat" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="chat_price" property="chatPrice" jdbcType="INTEGER" />
+    <result column="is_disturb" property="isDisturb" jdbcType="BIT" />
+    <result column="chat_time" property="chatTime" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, chat_price, is_disturb, chat_time
+  </sql>
+  <select id="findUserChatInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_user_chat
+    where id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.live.UserChat" >
+    insert into wk_user_chat (id, chat_price, is_disturb, 
+      chat_time, add_time)
+    values (#{id,jdbcType=INTEGER}, #{chatPrice,jdbcType=INTEGER}, #{isDisturb,jdbcType=BIT}, 
+      #{chatTime,jdbcType=INTEGER}, #{addTime,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.live.UserChat" >
+    update wk_user_chat
+    <set >
+      <if test="chatPrice != null" >
+        chat_price = #{chatPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDisturb != null" >
+        is_disturb = #{isDisturb,jdbcType=BIT},
+      </if>
+      <if test="chatTime != null" >
+        chat_time = #{chatTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insertSelective" parameterType="com.weking.model.live.UserChat" >
+    insert into wk_user_chat
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="chatPrice != null" >
+        chat_price,
+      </if>
+      <if test="isDisturb != null" >
+        is_disturb,
+      </if>
+      <if test="chatTime != null" >
+        chat_time,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="chatPrice != null" >
+        #{chatPrice,jdbcType=INTEGER},
+      </if>
+      <if test="isDisturb != null" >
+        #{isDisturb,jdbcType=BIT},
+      </if>
+      <if test="chatTime != null" >
+        #{chatTime,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+</mapper>

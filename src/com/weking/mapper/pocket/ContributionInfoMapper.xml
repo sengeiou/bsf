@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.pocket.ContributionInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.pocket.ContributionInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="anchor_id" property="anchorId" jdbcType="INTEGER" />
+    <result column="send_id" property="sendId" jdbcType="INTEGER" />
+    <result column="send_total_ticket" property="sendTotalTicket" jdbcType="BIGINT" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+    <result column="account" property="account" jdbcType="VARCHAR"/>
+    <result column="pichead_url" property="picheadUrl" jdbcType="VARCHAR"/>
+    <result column="level" property="level" jdbcType="INTEGER"/>
+    <result column="sex" property="sex" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, anchor_id, send_id, send_total_ticket,nickname,account,pichead_url
+  </sql>
+
+  <select id="selectContributionUserList" resultMap="BaseResultMap">
+    select c.send_total_ticket,u.nickname,u.account,u.pichead_url,u.sex,u.level,c.send_id
+    from wk_contribution_info c INNER
+    join wk_user_info u on u.id = c.send_id
+    where c.anchor_id = #{anchorId} order by c.send_total_ticket desc LIMIT #{offset},#{limit}
+  </select>
+
+   <update id="updateContirbution"  >
+    update wk_contribution_info
+    set  send_total_ticket = send_total_ticket + #{ticket}
+    where send_id = #{sendid} and anchor_id = #{anchorid}
+  </update>
+
+  <insert id="insert" parameterType="com.weking.model.pocket.ContributionInfo" >
+    insert into wk_contribution_info (id, anchor_id, send_id, 
+      send_total_ticket)
+    values (#{id,jdbcType=INTEGER}, #{anchorId,jdbcType=INTEGER}, #{sendId,jdbcType=INTEGER}, 
+      #{sendTotalTicket,jdbcType=BIGINT})
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.pocket.ContributionInfo" >
+    update wk_contribution_info
+    <set >
+      <if test="anchorId != null" >
+        anchor_id = #{anchorId,jdbcType=INTEGER},
+      </if>
+      <if test="sendId != null" >
+        send_id = #{sendId,jdbcType=INTEGER},
+      </if>
+      <if test="sendTotalTicket != null" >
+        send_total_ticket = #{sendTotalTicket,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getContributionOrder" resultType="Map" parameterType="java.lang.Integer" >
+    SELECT SUM(a.send_total_ticket) as diff,b.account,b.pichead_url as avatar,b.nickname
+    from wk_contribution_info a INNER JOIN wk_user_info b on a.send_id=b.id WHERE b.role=0
+    GROUP BY a.send_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <select id="getAllIncomeOrder" resultType="Map" parameterType="java.lang.Integer" >
+    SELECT SUM(a.send_total_ticket) as diff,b.account,b.pichead_url as avatar,b.nickname
+    from wk_contribution_info a INNER JOIN wk_user_info b on a.anchor_id=b.id
+     WHERE b.role=0
+    GROUP BY a.anchor_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <select id="getSendTotalTicket" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    SELECT  send_total_ticket FROM  wk_contribution_info where send_id=#{send_id} and anchor_id=#{anchor_id}
+  </select>
+</mapper>

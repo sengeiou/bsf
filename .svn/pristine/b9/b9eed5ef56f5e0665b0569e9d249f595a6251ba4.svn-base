@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.statistics.StatisticsMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.statistics.Statistics" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="fans_total" property="fansTotal" jdbcType="INTEGER" />
+    <result column="win_total" property="winTotal" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, fans_total, win_total
+  </sql>
+
+  <insert id="insert" parameterType="java.lang.Integer" >
+    insert into wk_statistics (user_id, fans_total,
+      win_total)
+    values (#{userId,jdbcType=INTEGER}, 0,
+      0)
+  </insert>
+
+  <update id="increaseFansTotalByUserId" parameterType="java.lang.Integer" >
+    update wk_statistics
+    set fans_total = fans_total + #{fansTotal,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <update id="reduceFansTotalByUserId" parameterType="java.lang.Integer" >
+    update wk_statistics
+    set fans_total = fans_total - #{fansTotal,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <update id="increaseWinTotalByUserId" parameterType="java.lang.Integer" >
+    update wk_statistics
+    set win_total = win_total + #{winTotal,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <update id="batchIncreaseWinTotal" >
+    update wk_statistics
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="win_total = case" suffix="end,">
+        <foreach collection="map" item="value" index="key">
+          <if test="value > 0">
+            when user_id = #{key} then win_total + #{value}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where user_id in
+    <foreach collection="map" index="key"  item="value" separator="," open="(" close=")">
+      <if test="value > 0">
+      #{key}
+      </if>
+    </foreach>
+  </update>
+
+  <select id="getWinTotalOrder" resultType="Map" >
+    select s.win_total AS diff,u.account,u.pichead_url as avatar,u.nickname,u.level
+    from wk_statistics s INNER JOIN wk_user_info u on s.user_id=u.id
+    ORDER BY win_total DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <select id="getFansTotalOrder" resultType="Map" >
+    select s.fans_total AS diff,u.account,u.pichead_url as avatar,u.nickname, u.level
+    from wk_statistics s INNER JOIN wk_user_info u on s.user_id=u.id
+    ORDER BY fans_total DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <select id="selectFansTotalList" resultType="Map" >
+    SELECT COUNT(*) as diff,befollow_id AS user_id
+    from wk_follow GROUP BY befollow_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <select id="selectWinTotalList" resultType="Map" >
+    SELECT SUM(income_coin) as diff,user_id
+    from wk_game_bet WHERE income_coin > 0
+    GROUP BY user_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <update id="batchUpdateWinTotal" >
+    update wk_statistics
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="win_total = case" suffix="end,">
+        <foreach collection="map" item="value" index="key">
+          <if test="value != null || value != 0">
+            when user_id = #{key} then #{value}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where user_id in
+    <foreach collection="map" index="key"  item="value" separator="," open="(" close=")">
+      <if test="value != null || value != 0">
+        #{key}
+      </if>
+    </foreach>
+  </update>
+
+  <update id="batchUpdateFansTotal" >
+    update wk_statistics
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="fans_total = case" suffix="end,">
+        <foreach collection="map" item="value" index="key">
+          <if test="value != null || value != 0">
+            when user_id = #{key} then #{value}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where user_id in
+    <foreach collection="map" index="key"  item="value" separator="," open="(" close=")">
+      <if test="value != null || value != 0">
+        #{key}
+      </if>
+    </foreach>
+  </update>
+</mapper>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.post.PostMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.post.PostInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="user_id" jdbcType="INTEGER"/>
+        <result column="post_content" property="post_content" jdbcType="VARCHAR"/>
+        <result column="comment_count" property="comment_count" jdbcType="INTEGER"/>
+        <result column="like_count" property="like_count" jdbcType="INTEGER"/>
+        <result column="post_date" property="post_date" jdbcType="BIGINT"/>
+        <result column="post_status" property="post_status" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="location" property="location" jdbcType="VARCHAR"/>
+        <result column="expiry_time" property="expiryTime" jdbcType="BIGINT"/>
+        <result column="dislike_count" property="dislike_count" jdbcType="INTEGER"/>
+        <result column="sca_reward" property="sca_reward" jdbcType="DECIMAL"/>
+        <result column="share_count" property="share_count" jdbcType="INTEGER"/>
+        <result column="balance_date" property="balance_date" jdbcType="BIGINT"/>
+        <result column="balance_status" property="balance_status" jdbcType="INTEGER"/>
+        <result column="sorts" property="sorts" jdbcType="INTEGER"/>
+        <result column="meta_key" property="meta_key" jdbcType="VARCHAR"/>
+        <result column="meta_value" property="meta_value" jdbcType="VARCHAR"/>
+        <result column="hots" property="hots" jdbcType="DOUBLE"/>
+
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="avatar" property="avatar" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, user_id, post_content, comment_count, like_count, post_date, post_status,type,city,location,expiry_time,dislike_count,
+    sca_reward,share_count,balance_date,balance_status,sorts,meta_key, meta_value,hots
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_post
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wk_post
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.weking.model.post.PostInfo" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into wk_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="user_id != null">
+                user_id,
+            </if>
+            <if test="post_content != null">
+                post_content,
+            </if>
+            <if test="comment_count != null">
+                comment_count,
+            </if>
+            <if test="like_count != null">
+                like_count,
+            </if>
+            <if test="post_date != null">
+                post_date,
+            </if>
+            <if test="post_status != null">
+                post_status,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="location != null">
+                location,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="expiryTime != null">
+                expiry_time,
+            </if>
+            <if test="dislike_count != null">
+                dislike_count,
+            </if>
+            <if test="sca_reward != null">
+                sca_reward,
+            </if>
+            <if test="share_count != null">
+                share_count,
+            </if>
+            <if test="balance_date != null">
+                balance_date,
+            </if>
+            <if test="balance_status != null">
+                balance_status,
+            </if>
+            <if test="meta_key != null">
+                meta_key,
+            </if>
+            <if test="meta_value != null">
+                meta_value,
+            </if>
+            <if test="sorts != null">
+                sorts,
+            </if>
+            <if test="hots != null">
+                hots,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="user_id != null">
+                #{user_id,jdbcType=INTEGER},
+            </if>
+            <if test="post_content != null">
+                #{post_content,jdbcType=VARCHAR},
+            </if>
+            <if test="comment_count != null">
+                #{comment_count,jdbcType=INTEGER},
+            </if>
+            <if test="like_count != null">
+                #{like_count,jdbcType=INTEGER},
+            </if>
+            <if test="post_date != null">
+                #{post_date,jdbcType=BIGINT},
+            </if>
+            <if test="post_status != null">
+                #{post_status,jdbcType=INTEGER},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="location != null">
+                #{location,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="expiryTime != null">
+                #{expiryTime,jdbcType=BIGINT},
+            </if>
+            <if test="dislike_count != null">
+                #{dislike_count,jdbcType=INTEGER},
+            </if>
+            <if test="sca_reward != null">
+                #{sca_reward,jdbcType=DECIMAL},
+            </if>
+            <if test="share_count != null">
+                #{share_count,jdbcType=INTEGER},
+            </if>
+            <if test="balance_date != null">
+                #{balance_date,jdbcType=BIGINT},
+            </if>
+            <if test="balance_status != null">
+                #{balance_status,jdbcType=INTEGER},
+            </if>
+            <if test="meta_key != null">
+                #{meta_key,jdbcType=VARCHAR},
+            </if>
+            <if test="meta_value != null">
+                #{meta_value,jdbcType=VARCHAR},
+            </if>
+            <if test="sorts != null">
+                #{sorts,jdbcType=INTEGER},
+            </if>
+            <if test="hots != null">
+                #{hots,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.post.PostInfo">
+        update wk_post
+        <set>
+            <if test="post_content != null">
+                post_content = #{post_content,jdbcType=VARCHAR},
+            </if>
+            <if test="comment_count != null">
+                comment_count = #{comment_count,jdbcType=INTEGER},
+            </if>
+            <if test="like_count != null">
+                like_count = #{like_count,jdbcType=INTEGER},
+            </if>
+            <if test="post_date != null">
+                post_date = #{post_date,jdbcType=BIGINT},
+            </if>
+            <if test="post_status != null">
+                post_status = #{post_status,jdbcType=INTEGER},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="location != null">
+                location = #{location,jdbcType=VARCHAR},
+            </if>
+            <if test="sca_reward != null">
+                sca_reward = #{sca_reward,jdbcType=DECIMAL},
+            </if>
+            <if test="balance_status != null">
+                balance_status = #{balance_status,jdbcType=INTEGER},
+            </if>
+            <if test="meta_key != null">
+                meta_key = #{meta_key,jdbcType=VARCHAR},
+            </if>
+            <if test="meta_value != null">
+                meta_value = #{meta_value,jdbcType=VARCHAR},
+            </if>
+            <if test="sorts != null">
+                sorts = #{sorts,jdbcType=INTEGER},
+            </if>
+            <if test="hots != null">
+                hots = #{hots,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="increaseLikeCount">
+        update wk_post
+        <set>
+            like_count = like_count + #{qty}
+        </set>
+        where id = #{postId}
+    </update>
+    <update id="increaseDislikeCount">
+        update wk_post
+        <set>
+            dislike_count = dislike_count + #{qty}
+        </set>
+        where id = #{postId}
+    </update>
+    <update id="increaseCommentCount">
+        update wk_post
+        <set>
+            comment_count = comment_count + #{qty}
+        </set>
+        where id = #{postId}
+    </update>
+
+    <update id="increaseShareCount">
+        update wk_post
+        <set>
+            share_count = share_count + #{qty}
+        </set>
+        where id = #{postId}
+    </update>
+
+    <select id="getPostList" resultMap="BaseResultMap">
+        SELECT C.id, user_id, post_content, comment_count, like_count, post_date, post_status,type,city,location,expiry_time,dislike_count,
+        sca_reward,share_count,balance_date,balance_status,sorts,meta_key, meta_value FROM
+        wk_follow  AS A INNER JOIN wk_post C ON A.befollow_id = C.user_id
+        WHERE A.follow_id = #{user_id} AND C.post_status = 0 and C.expiry_time > #{currentTime}
+        ORDER BY C.id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getFollowPostList" resultMap="BaseResultMap">
+        SELECT id, user_id, post_content, comment_count, like_count, post_date, post_status,type,city,location,expiry_time,dislike_count,
+        sca_reward,share_count,balance_date,balance_status,sorts,meta_key, meta_value
+        FROM wk_post
+        WHERE post_status = 0 and expiry_time > #{currentTime}
+        <if test="postId != 0">
+            AND id &lt; #{postId}
+        </if>
+        and user_id IN
+        <foreach collection="list" item="tempId" open="(" close=")" separator=",">
+          #{tempId}
+        </foreach>
+        ORDER BY id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getNewPostList" resultMap="BaseResultMap">
+        SELECT id, user_id, post_content, comment_count, like_count, post_date, post_status,type,city,location,expiry_time,dislike_count,
+        sca_reward,share_count,balance_date,balance_status,sorts,meta_key, meta_value
+        From wk_post
+        WHERE post_status = 0 and expiry_time > #{currentTime}
+        <if test="postId != 0">
+            AND id &lt; #{postId}
+        </if>
+        <if test="userId != 0">
+            AND user_id = #{userId}
+        </if>
+        ORDER BY id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getPost" resultMap="BaseResultMap">
+        SELECT id, user_id, post_content, comment_count, like_count, post_date, post_status,type,city,location,expiry_time,dislike_count,
+    sca_reward,share_count,balance_date,balance_status,sorts,meta_key, meta_value
+        From wk_post
+        WHERE post_status = 0 and id = #{post_id}
+    </select>
+
+    <select id="isLike" resultType="java.lang.Integer">
+        SELECT COUNT(*) as c from wk_post_comment where post_id=#{postId} and comment_user_id=#{userId} and comment_type=1
+    </select>
+
+    <select id="dislike" resultType="java.lang.Integer">
+        SELECT COUNT(*) as c from wk_post_comment where post_id=#{postId} and comment_user_id=#{userId} and comment_type=2
+    </select>
+
+    <delete id="deleteLikeByPostId">
+        delete from wk_post_comment
+        where post_id = #{postId} and comment_user_id=#{userId} and comment_type=1
+    </delete>
+
+    <select id="getCalculateAwardList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM wk_post
+        WHERE post_status = 0 and balance_status = 0 and balance_date &lt;= #{currentTime} and balance_date > 0
+        ORDER BY id ASC
+    </select>
+
+    <update id="updatePostStatusById">
+        update wk_post
+        SET post_status = #{status}
+        where id = #{postId}
+    </update>
+
+    <select id="getRecommendPostList" resultMap="BaseResultMap">
+        SELECT id, user_id, post_content, comment_count, like_count, post_date, post_status,type,city,location,expiry_time,dislike_count,
+        sca_reward,share_count,balance_date,balance_status,sorts,meta_key, meta_value
+        FROM wk_post
+        WHERE post_status = 0 and sorts > 0 and  expiry_time > #{currentTime}
+
+        ORDER BY  id DESC   /*sorts DESC,*/
+        LIMIT #{offset},#{limit}
+    </select>
+
+    
+</mapper>

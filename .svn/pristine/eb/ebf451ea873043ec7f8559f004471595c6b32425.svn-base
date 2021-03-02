@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.goods.GoodsCommonMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.goods.GoodsCommon" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_parentid" property="goodsParentId" jdbcType="INTEGER" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_jingle" property="goodsJingle" jdbcType="VARCHAR" />
+    <result column="gc_id" property="gcId" jdbcType="INTEGER" />
+    <result column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="spec_name" property="specName" jdbcType="VARCHAR" />
+    <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="goods_image" property="goodsImage" jdbcType="VARCHAR" />
+    <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+    <result column="goods_marketprice" property="goodsMarketprice" jdbcType="DECIMAL" />
+    <result column="goods_discount" property="goodsDiscount" jdbcType="REAL" />
+    <result column="transport_id" property="transportId" jdbcType="INTEGER" />
+    <result column="goods_freight" property="goodsFreight" jdbcType="DECIMAL" />
+    <result column="goods_state" property="goodsState" jdbcType="TINYINT" />
+    <result column="spec_value" property="specValue" jdbcType="LONGVARCHAR" />
+    <result column="coin_price" property="coin_price" jdbcType="DECIMAL" />
+  </resultMap>
+
+  <resultMap id="BaseResultExtendMap" type="com.weking.model.shop.goods.GoodsCommonExtend" extends="BaseResultMap">
+    <result column="goods_storage_alarm" property="goodsStorageAlarm" jdbcType="TINYINT" />
+    <result column="goods_vat" property="goodsVat" jdbcType="TINYINT" />
+    <result column="goods_attr" property="goodsAttr" jdbcType="LONGVARCHAR" />
+    <result column="goods_body" property="goodsBody" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, goods_name, goods_jingle, gc_id, store_id, spec_name, brand_id, type_id, goods_image,goods_state,goods_parentid,
+     goods_price,goods_marketprice,goods_discount,transport_id,goods_freight,spec_value,coin_price
+  </sql>
+
+  <sql id="Base_Column_Extend_List" >
+    goods_vat,goods_attr, goods_body
+  </sql>
+
+  <delete id="delGoodsCommon" >
+    DELETE FROM shop_goods_common
+    WHERE id = #{id,jdbcType=INTEGER} AND store_id = #{storeId,jdbcType=INTEGER}
+  </delete>
+
+  <select id="selectGoodsCommonByStoreId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND goods_verify = 1 AND goods_lock = 0
+    AND goods_state = 1 ORDER BY goods_commend DESC limit #{index},#{count}
+  </select>
+
+  <select id="selectRoomGoodsCommonList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND is_live = 1 AND goods_verify = 1 AND goods_lock = 0
+    AND goods_state = 1 ORDER BY goods_commend DESC
+  </select>
+
+  <select id="selectRoomGoodsCommonIdList" resultType="int" parameterType="java.lang.Integer" >
+    select id
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND is_live = 1 AND goods_verify = 1 AND goods_lock = 0
+    AND goods_state = 1 ORDER BY goods_commend DESC
+  </select>
+
+  <select id="selectRoomGoodsCommonCount" resultType="int" parameterType="java.lang.Integer" >
+    select count(*)
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND is_live = 1 AND goods_verify = 1 AND goods_lock = 0
+    AND goods_state = 1
+  </select>
+
+  <select id="selectGoodsParentIdList" resultType="int" parameterType="java.lang.Integer" >
+    select goods_parentid
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND goods_parentid > 0
+  </select>
+
+  <select id="findIdByGoodsParentId" resultType="int" parameterType="java.lang.Integer" >
+    select id
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND goods_parentid = #{goodsParentId} limit 1
+  </select>
+
+  <select id="selectGoodsCommendList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    where goods_commend = 1 AND goods_verify = 1 AND goods_lock = 0
+    AND goods_state = 1 limit #{index},#{count}
+  </select>
+
+  <select id="selectStoreGoodsCommendList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    where store_id = #{storeId} AND goods_commend = 1 AND goods_verify = 1 AND goods_lock = 0
+    AND goods_state = 1 limit #{index},#{count}
+  </select>
+
+  <select id="selectSearchGoodsCommonList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    <trim prefix="WHERE" prefixOverrides="AND">
+      <if test="storeId != 0" >
+        AND store_id = #{storeId}
+      </if>
+      <if test="goodsName != null and goodsName != ''" >
+        AND goods_name LIKE CONCAT('%',#{goodsName},'%')
+      </if>
+      <if test="price != null" >
+        AND goods_price &gt;= #{price[0]} AND goods_price &lt;= #{price[1]}
+      </if>
+        AND goods_verify = 1 AND goods_lock = 0 AND goods_state = 1
+    </trim>
+    limit #{index},#{count}
+  </select>
+
+  <select id="findGoodsInfoByGoodsCommonId" resultMap="BaseResultExtendMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />,<include refid="Base_Column_Extend_List" />
+    from shop_goods_common
+    where id = #{goodsCommonId,jdbcType=INTEGER} AND goods_verify = 1
+  </select>
+
+  <select id="selectStoreGoodsCommonNum" resultType="int" parameterType="java.lang.Integer" >
+    select count(*)
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND goods_verify = 1
+    AND goods_state = 1
+  </select>
+
+  <select id="findGoodsCommonById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    where id = #{goodsCommonId,jdbcType=INTEGER} AND goods_verify = 1
+    AND goods_state = 1
+  </select>
+
+  <select id="selectGoodsCommonListByGcId1" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_goods_common
+    where gc_id_1 = #{gcId,jdbcType=INTEGER} AND goods_parentid = 0 AND goods_verify = 1
+    AND goods_state = 1 order by id DESC limit #{index},#{count}
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.shop.goods.GoodsCommon" >
+    insert into shop_goods_common (id, goods_name, goods_jingle, 
+      gc_id, store_id, spec_name, 
+      brand_id, type_id, goods_image, 
+      goods_state, goods_verify, goods_lock, 
+      goods_addtime, goods_selltime, goods_price, 
+      goods_marketprice, goods_costprice, goods_discount, 
+      goods_storage_alarm, transport_id, goods_commend, 
+      goods_freight, goods_vat, spec_value, 
+      goods_attr, goods_body,coin_price
+      )
+    values (#{id,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, #{goodsJingle,jdbcType=VARCHAR}, 
+      #{gcId,jdbcType=INTEGER}, #{storeId,jdbcType=INTEGER}, #{specName,jdbcType=VARCHAR}, 
+      #{brandId,jdbcType=INTEGER}, #{typeId,jdbcType=INTEGER}, #{goodsImage,jdbcType=VARCHAR}, 
+      #{goodsState,jdbcType=TINYINT}, #{goodsVerify,jdbcType=TINYINT}, #{goodsLock,jdbcType=TINYINT}, 
+      #{goodsAddtime,jdbcType=INTEGER}, #{goodsSelltime,jdbcType=INTEGER}, #{goodsPrice,jdbcType=DECIMAL}, 
+      #{goodsMarketprice,jdbcType=DECIMAL}, #{goodsCostprice,jdbcType=DECIMAL}, #{goodsDiscount,jdbcType=REAL}, 
+      #{goodsStorageAlarm,jdbcType=TINYINT}, #{transportId,jdbcType=INTEGER}, #{goodsCommend,jdbcType=TINYINT}, 
+      #{goodsFreight,jdbcType=DECIMAL}, #{goodsVat,jdbcType=TINYINT}, #{specValue,jdbcType=LONGVARCHAR}, 
+      #{goodsAttr,jdbcType=LONGVARCHAR}, #{goodsBody,jdbcType=LONGVARCHAR}, #{coin_price,jdbcType=DECIMAL}
+      )
+  </insert>
+
+  <update id="updateIsLiveByGoodsCommonIds" parameterType="java.lang.String" >
+    update shop_goods_common set is_live = 1
+    where store_id = #{storeId} AND id IN
+    <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </update>
+
+  <update id="clearIsLiveGoodsCommon" parameterType="java.lang.Integer" >
+    update shop_goods_common set is_live = 0 where store_id = #{storeId}
+  </update>
+
+  <insert id="insertCopy" keyProperty="id" useGeneratedKeys="true" parameterType="java.lang.Integer">
+    insert into shop_goods_common (goods_parentid,goods_name, goods_jingle,
+    gc_id,gc_id_1,gc_id_2,gc_id_3,store_id, spec_name,
+    brand_id, type_id, goods_image,
+    goods_state, goods_verify, goods_lock,
+    goods_addtime, goods_selltime, goods_price,
+    goods_marketprice, goods_costprice, goods_discount,
+    goods_storage_alarm, transport_id,
+    goods_freight, goods_vat, spec_value,
+    goods_attr, goods_body,coin_price
+    ) SELECT id,goods_name, goods_jingle,
+    gc_id,gc_id_1,gc_id_2,gc_id_3,#{storeId}, spec_name,
+    brand_id, type_id, goods_image,
+    goods_state, goods_verify, goods_lock,
+    #{goodsAddTime}, #{goodsAddTime}, goods_price,
+    goods_marketprice, goods_costprice, goods_discount,
+    goods_storage_alarm, transport_id,
+    goods_freight, goods_vat, spec_value,
+    goods_attr, goods_body,coin_price FROM shop_goods_common WHERE id = #{goodsCommonId} AND NOT EXISTS (select id
+    from shop_goods_common
+    where store_id = #{storeId,jdbcType=INTEGER} AND goods_parentid = #{goodsCommonId} limit 1)
+  </insert>
+</mapper>

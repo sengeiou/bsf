@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.goods.GoodsImagesMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.goods.GoodsImages" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_commonid" property="goodsCommonid" jdbcType="INTEGER" />
+    <result column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="color_id" property="colorId" jdbcType="INTEGER" />
+    <result column="goods_image" property="goodsImage" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="TINYINT" />
+    <result column="is_default" property="isDefault" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_commonid, store_id, color_id, goods_image, sort, is_default
+  </sql>
+
+  <select id="selectListByGoodsCommonId" resultType="String" parameterType="java.lang.Integer" >
+    select goods_image
+    from shop_goods_images
+    where goods_commonid = #{goodsCommonid,jdbcType=INTEGER} ORDER BY is_default,sort DESC
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from shop_goods_images
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.weking.model.shop.goods.GoodsImages" >
+    insert into shop_goods_images (id, goods_commonid, store_id, 
+      color_id, goods_image, sort, 
+      is_default)
+    values (#{id,jdbcType=INTEGER}, #{goodsCommonid,jdbcType=INTEGER}, #{storeId,jdbcType=INTEGER}, 
+      #{colorId,jdbcType=INTEGER}, #{goodsImage,jdbcType=VARCHAR}, #{sort,jdbcType=TINYINT}, 
+      #{isDefault,jdbcType=TINYINT})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.shop.goods.GoodsImages" >
+    update shop_goods_images
+    set goods_commonid = #{goodsCommonid,jdbcType=INTEGER},
+      store_id = #{storeId,jdbcType=INTEGER},
+      color_id = #{colorId,jdbcType=INTEGER},
+      goods_image = #{goodsImage,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=TINYINT},
+      is_default = #{isDefault,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

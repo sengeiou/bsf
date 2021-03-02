@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.LiveLogInfoMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.log.LiveLogInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="live_start" property="liveStart" jdbcType="BIGINT"/>
+        <result column="live_end" property="liveEnd" jdbcType="BIGINT"/>
+        <result column="audience_num" property="audienceNum" jdbcType="INTEGER"/>
+        <result column="live_title" property="live_title" jdbcType="VARCHAR"/>
+        <result column="live_cover" property="live_cover" jdbcType="VARCHAR"/>
+        <result column="live_stream_id" property="live_stream_id" jdbcType="VARCHAR"/>
+        <result column="replay_url" property="replay_url" jdbcType="VARCHAR"/>
+        <result column="diff" property="diff" jdbcType="BIGINT"/>
+        <result column="longitude" property="longitude" jdbcType="DOUBLE"/>
+        <result column="latitude" property="latitude" jdbcType="DOUBLE"/>
+        <result column="tag_name" property="tag_name" jdbcType="VARCHAR"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="pichead_url" property="picheadUrl" jdbcType="VARCHAR"/>
+        <result column="real_audience" property="real_audience" jdbcType="INTEGER"/>
+        <result column="recommend" property="recommend" jdbcType="INTEGER"/>
+        <result column="live_extend" property="live_extend" jdbcType="VARCHAR"/>
+        <result column="live_type" property="live_type" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="like_count" property="like_count" jdbcType="INTEGER"/>
+        <result column="is_horizontal" property="isHorizontal" jdbcType="BIT"/>
+        <result column="game_category_id" property="game_category_id" jdbcType="INTEGER"/>
+        <result column="program_slogan" property="program_slogan" jdbcType="VARCHAR"/>
+        <result column="link_url" property="link_url" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, live_start, live_end, audience_num,live_title,live_cover,live_stream_id,replay_url,diff,longitude,latitude,tag_name,
+    recommend,live_extend,live_type,status,like_count,game_category_id,program_slogan,link_url
+  </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_mylive_log
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="findLiveStreamIdById" resultType="String" parameterType="java.lang.Integer">
+        select live_stream_id from wk_mylive_log
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.weking.model.log.LiveLogInfo" keyProperty="id"
+            useGeneratedKeys="true">
+        insert into wk_mylive_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="liveStart != null">
+                live_start,
+            </if>
+            <if test="liveEnd != null">
+                live_end,
+            </if>
+            <if test="audienceNum != null">
+                audience_num,
+            </if>
+            <if test="live_title != null">
+                live_title,
+            </if>
+            <if test="live_stream_id != null">
+                live_stream_id,
+            </if>
+            <if test="live_cover != null">
+                live_cover,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="tag_name != null">
+                tag_name,
+            </if>
+            <if test="real_audience != null">
+                real_audience,
+            </if>
+            <if test="live_type != null">
+                live_type,
+            </if>
+            <if test="live_extend != null">
+                live_extend,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="project_name != null">
+                project_name,
+            </if>
+            <if test="isHorizontal != null">
+                is_horizontal,
+            </if>
+            <if test="game_category_id != null">
+                game_category_id,
+            </if>
+            <if test="program_slogan != null">
+                program_slogan,
+            </if>
+            <if test="link_url != null">
+                link_url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="liveStart != null">
+                #{liveStart,jdbcType=BIGINT},
+            </if>
+            <if test="liveEnd != null">
+                #{liveEnd,jdbcType=BIGINT},
+            </if>
+            <if test="audienceNum != null">
+                #{audienceNum,jdbcType=INTEGER},
+            </if>
+            <if test="live_title != null">
+                #{live_title,jdbcType=VARCHAR},
+            </if>
+            <if test="live_stream_id != null">
+                #{live_stream_id,jdbcType=VARCHAR},
+            </if>
+            <if test="live_cover != null">
+                #{live_cover,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="tag_name != null">
+                #{tag_name,jdbcType=VARCHAR},
+            </if>
+            <if test="real_audience != null">
+                #{real_audience,jdbcType=INTEGER},
+            </if>
+            <if test="live_type != null">
+                #{live_type,jdbcType=INTEGER},
+            </if>
+            <if test="live_extend != null">
+                #{live_extend,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="project_name != null">
+                #{project_name,jdbcType=VARCHAR},
+            </if>
+            <if test="isHorizontal != null">
+                #{isHorizontal,jdbcType=BIT},
+            </if>
+            <if test="game_category_id != null">
+                #{game_category_id,jdbcType=INTEGER},
+            </if>
+            <if test="program_slogan != null">
+                #{program_slogan,jdbcType=VARCHAR},
+            </if>
+            <if test="link_url != null">
+                #{link_url,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.log.LiveLogInfo">
+        update wk_mylive_log
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="liveStart != null">
+                live_start = #{liveStart,jdbcType=BIGINT},
+            </if>
+            <if test="liveEnd != null">
+                live_end = #{liveEnd,jdbcType=BIGINT},
+            </if>
+            <if test="audienceNum != null">
+                audience_num = #{audienceNum,jdbcType=INTEGER},
+            </if>
+            <if test="diff != null">
+                diff = #{diff,jdbcType=BIGINT},
+            </if>
+            <if test="live_title != null">
+                live_title = #{live_title,jdbcType=VARCHAR},
+            </if>
+            <if test="live_cover != null">
+                live_cover = #{live_cover,jdbcType=VARCHAR},
+            </if>
+            <if test="live_stream_id != null">
+                live_stream_id = #{live_stream_id,jdbcType=VARCHAR},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="tag_name != null">
+                tag_name = #{tag_name,jdbcType=VARCHAR},
+            </if>
+            <if test="real_audience != null">
+                real_audience = #{real_audience,jdbcType=INTEGER},
+            </if>
+            <if test="live_type != null">
+                live_type = #{live_type,jdbcType=INTEGER},
+            </if>
+            <if test="live_extend != null">
+                live_extend = #{live_extend,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="program_slogan != null">
+                program_slogan = #{program_slogan,jdbcType=VARCHAR},
+            </if>
+            <if test="link_url != null">
+                link_url = #{link_url,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateLiveStatus" parameterType="java.lang.Integer">
+        update wk_mylive_log SET status = #{status} where id = #{liveId,jdbcType=INTEGER} AND user_id = #{userId}
+    </update>
+
+    <update id="updateLiveEndByUserId">
+    update wk_mylive_log
+    set live_end = #{live_end,jdbcType=BIGINT},
+    diff = #{diff,jdbcType=BIGINT}
+    where user_id= #{user_id,jdbcType=INTEGER} and  diff = 0
+  </update>
+
+    <select id="getLiveTime" resultType="java.util.HashMap" parameterType="java.lang.Integer">
+        select  IFNULL((select SUM(diff) from wk_mylive_log where user_id = #{userId,jdbcType=INTEGER}),0) as all_total,
+        IFNULL((select SUM(diff) from wk_mylive_log where user_id = #{userId,jdbcType=INTEGER} and live_start >= #{liveStart,jdbcType=INTEGER}),0) as month_total
+    </select>
+
+    <select id="getNewLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end =0 and b.isblack=1 and a.live_type in (0,30,11,20,40)
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.reg_time DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getHotLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url,c.category_name as game_category_name
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        LEFT JOIN wk_game_category c on a.game_category_id = c.category_id
+        WHERE a.live_end = 0 and b.isblack = 1 and a.live_type in (0,30,11,20,40) and a.id!= #{liveId}
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getHotLivingIsOfficial" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url,c.category_name as game_category_name
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        LEFT JOIN wk_game_category c on a.game_category_id = c.category_id
+        WHERE a.live_end = 0 and b.isblack = 1 and b.is_official = 1 and a.live_type in (0,30,10,11,12,20,40) and a.id!= #{liveId}
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getFollowLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and b.isblack=1 and a.live_type in (0,30,11,20,40)
+        <if test="project_name == ''">
+            AND a.project_name = ""
+        </if>
+        AND EXISTS (SELECT befollow_id FROM wk_follow WHERE follow_id = #{userId} AND befollow_id = a.user_id)
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getTagsLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0
+        <if test="tagName != ''">
+            and a.tag_name = #{tagName}
+        </if>
+        and b.isblack=1 and a.live_type in (0,30,11,20,40)
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getNearbyLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url,b.lng,b.lat
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 AND b.lng >= #{minLng} AND b.lng &lt; #{maxLng} AND b.lat >= #{minLat} AND b.lat &lt;
+        #{maxLat} and b.isblack=1 and a.live_type in (0,30)
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getVIPLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and b.isblack=1 and live_type  =10
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getVIPLivingByTag" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and b.isblack=1 AND a.tag_name = #{tagName} and live_type =10
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+
+    <select id="getPrivacyLiving" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and b.isblack=1 and live_type =11
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getPrivacyLivingByTag" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and b.isblack=1 AND a.tag_name = #{tagName} and live_type =11
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+
+
+
+    <select id="getShopLiveList" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and live_type = 20 AND b.isblack=1
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getGameLiveList" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url,c.category_name as game_category_name
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        INNER JOIN wk_game_category c on a.game_category_id = c.category_id
+        WHERE a.live_end = 0
+        <if test="game_category_id !=''">
+            and a.game_category_id = #{game_category_id}
+        </if>
+        and b.isblack=1 and a.live_type in (30)
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getPlayback" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.user_id=#{userId} and a.diff > 0 and b.isblack=1 and (a.status =#{status1} or a.status =#{status2})
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY /*b.sorts DESC,*/ a.live_end DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="selectLivingByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_mylive_log
+        where user_id = #{userId} and live_end = 0 ORDER BY id DESC LIMIT 0,1
+    </select>
+
+    <select id="getRecommendRecord" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.recommend=1 <!--and b.isblack=1
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+       -->
+        GROUP by a.user_id
+        ORDER BY b.sorts DESC, a.live_end DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getMyLiveTimeOrder" resultType="Map">
+        SELECT SUM(a.diff) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_mylive_log a INNER JOIN wk_user_info b on a.user_id=b.id WHERE 1
+        <if test="liveStart != null">
+            AND Left(a.live_start,6) = #{liveStart}
+        </if>
+        GROUP BY b.account,b.pichead_url,b.nickname ORDER BY diff DESC limit #{offset},#{limit}
+    </select>
+
+    <update id="updateLike">
+        update wk_mylive_log
+        set  like_count = like_count + #{like_count}
+        where id = #{live_id}
+    </update>
+
+    <select id="getIsLivingCount" resultType="int">
+        SELECT COUNT(*) FROM wk_mylive_log WHERE live_end = 0
+    </select>
+
+
+
+    <select id="getAllLivingIsOfficial" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0  and b.is_official = 1  and a.id!= #{liveId}
+        ORDER BY b.sorts DESC, a.live_start ASC
+    </select>
+
+    <select id="getRemandLivingIsOfficial" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0  and b.is_official = 1
+        ORDER BY b.sorts DESC limit 1
+    </select>
+
+
+    <select id="findLiveLogInfoByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_mylive_log
+        where user_id = #{userId,jdbcType=INTEGER} order by id desc limit 1
+    </select>
+
+    <select id="findLiveLogInfoByEndAndUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_mylive_log
+        where user_id = #{userId,jdbcType=INTEGER} and live_end!=0 and live_type=10 order by id desc limit 1
+    </select>
+
+
+
+
+    <select id="getHotRankList" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.live_end = 0 and b.isblack=1 AND b.sorts >= #{sorts}  and a.id!= #{liveId}
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+        ORDER BY b.sorts DESC, a.live_start ASC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getMonthIncome"  resultType="Map" parameterType="java.lang.Integer">
+        SELECT live_start,diff ,IFNULL(SUM(b.receive_ticket),0) price FROM(
+        SELECT id ,live_start,diff FROM wk_mylive_log WHERE
+        user_id=#{user_id} AND live_start &gt;= #{beginTime} and live_start &lt;= #{endTime}  )A  LEFT JOIN
+        wk_consume_log b  on  a.id=b.live_record_id  AND b.gift_id>6   GROUP BY A.id ORDER BY A.live_start DESC;
+    </select>
+
+    <update id="updateLiveReplayUrl" parameterType="java.lang.Integer">
+        update wk_mylive_log SET replay_url = #{replayUrl} where live_stream_id = #{liveStreamId}
+    </update>
+
+    <select id="getVIPRecommendRecord" resultMap="BaseResultMap">
+        SELECT a.*,b.account,b.nickname,b.pichead_url
+        FROM wk_mylive_log a
+        Inner JOIN wk_user_info b on a.user_id = b.id
+        WHERE a.recommend=1 and a.live_type=10 <!--and b.isblack=1
+        <if test="project_name == ''">
+            AND project_name = ""
+        </if>
+       -->
+        GROUP by a.user_id
+        ORDER BY b.sorts DESC, a.live_end DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="selectByStreamId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_mylive_log
+        where live_stream_id = #{liveStreamId} limit 1
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.follow.FollowInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.follow.FollowInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="follow_id" property="followId" jdbcType="INTEGER" />
+    <result column="befollow_id" property="befollowId" jdbcType="INTEGER" />
+    <result column="follow_time" property="followTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, follow_id, befollow_id, follow_time
+  </sql>
+
+   <select id="verifyIsFollowed" resultType="int" >
+    select  count(*)
+    from wk_follow
+    where befollow_id = #{befollowedId} and follow_id = #{followId}
+  </select>
+
+   <select id="getStarsFansNum" resultType="java.util.HashMap"  parameterType="java.lang.Integer" >
+   select  (select count(*) from wk_follow f INNER JOIN wk_user_info u ON u.id=f.befollow_id where follow_id =#{userid} AND enable = 1) as stars,
+   (select count(*) from wk_follow f INNER JOIN wk_user_info u ON u.id=f.follow_id where befollow_id =#{userid} AND enable = 1) as fans
+  </select>
+
+  <select id="getFansNum" resultType="int"  parameterType="java.lang.Integer" >
+    select count(*) from wk_follow f INNER JOIN wk_user_info u ON u.id=f.follow_id where befollow_id =#{userid} AND enable = 1
+  </select>
+
+  <select id="getFansOrder" resultType="Map" parameterType="java.lang.Integer" >
+    SELECT a.diff,b.account,b.pichead_url as avatar,b.nickname,b.level,b.id from
+    (SELECT befollow_id,COUNT(*) as diff FROM wk_follow
+    <if test="followTime != null">
+      WHERE Left(a.follow_time,6) = #{followTime}
+    </if>
+    GROUP BY befollow_id ORDER BY diff DESC LIMIT  #{offset},#{limit}) a
+    LEFT JOIN wk_user_info b on a.befollow_id=b.id
+  </select>
+
+  <delete id="deleteByUserid" parameterType="java.lang.Integer" >
+    delete from wk_follow
+    where follow_id = #{followid} and befollow_id = #{befollowid}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.weking.model.follow.FollowInfo" >
+    insert into wk_follow
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="followId != null" >
+        follow_id,
+      </if>
+      <if test="befollowId != null" >
+        befollow_id,
+      </if>
+      <if test="followTime != null" >
+        follow_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="followId != null" >
+        #{followId,jdbcType=INTEGER},
+      </if>
+      <if test="befollowId != null" >
+        #{befollowId,jdbcType=INTEGER},
+      </if>
+      <if test="followTime != null" >
+        #{followTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="getUserFollowerList" resultType="Integer" parameterType="java.lang.Integer">
+    SELECT befollow_id
+    FROM wk_follow
+    WHERE follow_id = #{userId}
+  </select>
+
+  <select id="findUserFollowerList" resultType="Map" parameterType="java.lang.Integer">
+    select b.cid,b.devicetoken
+    from wk_follow a inner JOIN wk_user_info b on a.follow_id = b.id
+    where a.befollow_id = #{userId}
+  </select>
+
+</mapper>

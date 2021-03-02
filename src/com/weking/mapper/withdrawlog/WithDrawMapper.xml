@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.withdrawlog.WithDrawMapper" >
+
+  <resultMap id="BaseResultMap" type="com.weking.model.withdrawlog.WithDraw" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="draw_time" property="drawTime" jdbcType="BIGINT" />
+    <result column="draw_money" property="drawMoney" jdbcType="DOUBLE" />
+    <result column="approve_state" property="approveState" jdbcType="TINYINT" />
+    <result column="approve_time" property="approveTime" jdbcType="BIGINT" />
+    <result column="payment_sn" property="paymentSn" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="draw_num" property="draw_num" jdbcType="DOUBLE" />
+    <result column="draw_type" property="draw_type" jdbcType="TINYINT" />
+    <result column="pay_type" property="pay_type" jdbcType="TINYINT" />
+    <result column="pay_account" property="pay_account" jdbcType="VARCHAR" />
+    <result column="pay_name" property="pay_name" jdbcType="VARCHAR" />
+    <result column="bank_name" property="bank_name" jdbcType="VARCHAR" />
+    <result column="bank_account" property="bank_account" jdbcType="VARCHAR" />
+    <result column="extend_id" property="extend_id" jdbcType="BIGINT" />
+    <result column="fee" property="fee" jdbcType="DOUBLE" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="eth_address" property="eth_address" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, user_id, draw_time, draw_money, approve_state, approve_time, payment_sn, trade_no,draw_num,draw_type,
+    pay_type,pay_account,pay_name,bank_name,bank_account,extend_id,fee,currency,eth_address
+  </sql>
+  <select id="findByUserId" resultType="int" parameterType="java.lang.Integer" >
+    select count(1)
+    from wk_withdraw_log
+    where user_id = #{userId,jdbcType=INTEGER} AND approve_state = 2
+  </select>
+
+  <select id="selectListByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from wk_withdraw_log
+    where user_id = #{userId,jdbcType=INTEGER} ORDER BY id DESC limit #{offset},#{limit}
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.withdrawlog.WithDraw" >
+    insert into wk_withdraw_log (id, user_id, draw_time, draw_money, payment_sn,
+      trade_no,draw_num,draw_type,pay_type,pay_account,pay_name,bank_account,bank_name,extend_id,fee,currency,eth_address)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{drawTime,jdbcType=BIGINT}, 
+      #{drawMoney,jdbcType=DOUBLE},#{paymentSn,jdbcType=VARCHAR},#{tradeNo,jdbcType=VARCHAR},
+      #{draw_num,jdbcType=DOUBLE},#{draw_type,jdbcType=TINYINT},#{pay_type,jdbcType=TINYINT},
+      #{pay_account,jdbcType=VARCHAR},#{pay_name,jdbcType=VARCHAR},#{bank_account,jdbcType=VARCHAR},
+      #{bank_name,jdbcType=VARCHAR},#{extend_id,jdbcType=BIGINT},#{fee,jdbcType=DOUBLE},#{currency,jdbcType=VARCHAR},#{eth_address,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="selectTodayListByUserId" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from wk_withdraw_log
+    where user_id = #{userId} AND draw_time >= #{today} AND approve_state != 2
+  </select>
+
+  <select id="selectByPaymentSn" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from wk_withdraw_log
+    where payment_sn = #{paymentSn}
+  </select>
+
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.MiningLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.log.MiningLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="opt_type" property="optType" jdbcType="TINYINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="extend_id" property="extendId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, amount, add_time, opt_type, remark, extend_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_mining_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from wk_mining_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.log.MiningLog" >
+    insert into wk_mining_log (id, user_id, amount, 
+      add_time, opt_type, remark, 
+      extend_id)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{amount,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=BIGINT}, #{optType,jdbcType=TINYINT}, #{remark,jdbcType=VARCHAR}, 
+      #{extendId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.log.MiningLog" >
+    insert into wk_mining_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="optType != null" >
+        opt_type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="extendId != null" >
+        extend_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="optType != null" >
+        #{optType,jdbcType=TINYINT},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="extendId != null" >
+        #{extendId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.log.MiningLog" >
+    update wk_mining_log
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="optType != null" >
+        opt_type = #{optType,jdbcType=TINYINT},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="extendId != null" >
+        extend_id = #{extendId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.log.MiningLog" >
+    update wk_mining_log
+    set user_id = #{userId,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=BIGINT},
+      opt_type = #{optType,jdbcType=TINYINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      extend_id = #{extendId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

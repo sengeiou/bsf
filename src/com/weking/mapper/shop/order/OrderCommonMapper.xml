@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.order.OrderCommonMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.order.OrderCommon" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="evaluation_time" property="evaluationTime" jdbcType="INTEGER" />
+    <result column="evalseller_state" property="evalsellerState" jdbcType="CHAR" />
+    <result column="evalseller_time" property="evalsellerTime" jdbcType="INTEGER" />
+    <result column="order_message" property="orderMessage" jdbcType="VARCHAR" />
+    <result column="address_id" property="addressId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, store_id, evaluation_time, evalseller_state, evalseller_time, order_message, 
+    address_id
+  </sql>
+  <select id="findByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_order_common
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insertBatch" parameterType="com.weking.model.shop.order.OrderCommon" >
+    insert into shop_order_common (id, store_id,
+       order_message, address_id)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+    (#{item.id,jdbcType=INTEGER}, #{item.storeId,jdbcType=INTEGER},
+      #{item.orderMessage,jdbcType=VARCHAR}, #{item.addressId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.EventLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.log.EventLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="luckycode" property="luckycode" jdbcType="VARCHAR" />
+    <result column="event1_time" property="event1Time" jdbcType="BIGINT" />
+    <result column="event2_time" property="event2Time" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, luckycode, event1_time, event2_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_event_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_event_log
+    where user_id = #{user_id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_event_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.log.EventLog" >
+    insert into wk_event_log (id, user_id, luckycode, 
+      event1_time, event2_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{luckycode,jdbcType=VARCHAR}, 
+      #{event1Time,jdbcType=BIGINT}, #{event2Time,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.log.EventLog" >
+    insert into wk_event_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="luckycode != null" >
+        luckycode,
+      </if>
+      <if test="event1Time != null" >
+        event1_time,
+      </if>
+      <if test="event2Time != null" >
+        event2_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="luckycode != null" >
+        #{luckycode,jdbcType=VARCHAR},
+      </if>
+      <if test="event1Time != null" >
+        #{event1Time,jdbcType=BIGINT},
+      </if>
+      <if test="event2Time != null" >
+        #{event2Time,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.log.EventLog" >
+    update wk_event_log
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="luckycode != null" >
+        luckycode = #{luckycode,jdbcType=VARCHAR},
+      </if>
+      <if test="event1Time != null" >
+        event1_time = #{event1Time,jdbcType=BIGINT},
+      </if>
+      <if test="event2Time != null" >
+        event2_time = #{event2Time,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.log.EventLog" >
+    update wk_event_log
+    set user_id = #{userId,jdbcType=INTEGER},
+      luckycode = #{luckycode,jdbcType=VARCHAR},
+      event1_time = #{event1Time,jdbcType=BIGINT},
+      event2_time = #{event2Time,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

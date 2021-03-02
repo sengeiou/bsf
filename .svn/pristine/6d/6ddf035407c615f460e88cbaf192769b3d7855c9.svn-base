@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.certification.CertificationMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.certification.Certification">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="idpic_url" property="idpicUrl" jdbcType="VARCHAR"/>
+        <result column="id_num" property="idNum" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="ispass" property="ispass" jdbcType="SMALLINT"/>
+        <result column="un_reason" property="unReason" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, real_name, idpic_url, id_num, phone, ispass, un_reason
+  </sql>
+
+    <select id="selectByuserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_certification
+        where user_id = #{userId,jdbcType=INTEGER} ORDER BY id DESC
+        limit 0,1
+    </select>
+
+    <insert id="insert" parameterType="com.weking.model.certification.Certification">
+      insert into wk_certification(user_id,real_name,idpic_url,id_num,phone) VALUES
+     (#{userId,jdbcType=INTEGER},#{realName,jdbcType=VARCHAR}, #{idpicUrl,jdbcType=VARCHAR},#{idNum,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR})
+    </insert>
+
+</mapper>

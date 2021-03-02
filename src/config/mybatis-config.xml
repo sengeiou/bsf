@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 实体类,简称 -设置别名 -->
+    <!--<typeAliases>-->
+        <!--&lt;!&ndash;<typeAlias alias="User" type="com.weking.model.User"/>&ndash;&gt;-->
+    <!--</typeAliases>-->
+    <!-- 实体接口映射资源 -->
+    <!--
+        说明：如果xxMapper.xml配置文件放在和xxMapper.java统一目录下，mappers也可以省略，因为org.mybatis.spring.mapper.MapperFactoryBean默认会去查找与xxMapper.java相同目录和名称的xxMapper.xml
+    -->
+    <!--<mappers>-->
+        <!--<mapper resource="com/weking/mapper/account/AccountInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/room/RoomInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/log/LoginLogInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/log/LiveLogInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/follow/FollowInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/pocket/ContributionInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/pocket/PocketInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/pocket/GiftInfoMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/suggestion/SuggestionMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/certification/CertificationMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/PlayAddress/PlayAddressMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/keyword/KeyWordMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/chathistory/ChatHistoryMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/advertisement/AdvertisementMapper.xml"/>-->
+        <!--<mapper resource="com/weking/mapper/live/LiveTagMapper.xml"/>-->
+    <!--</mappers>-->
+
+</configuration>  

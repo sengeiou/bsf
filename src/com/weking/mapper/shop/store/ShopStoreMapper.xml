@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.store.ShopStoreMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.store.ShopStore" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="grade_id" property="gradeId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="sc_id" property="scId" jdbcType="INTEGER" />
+    <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="area_info" property="areaInfo" jdbcType="VARCHAR" />
+    <result column="store_address" property="storeAddress" jdbcType="VARCHAR" />
+    <result column="store_state" property="storeState" jdbcType="TINYINT" />
+    <result column="store_sort" property="storeSort" jdbcType="INTEGER" />
+    <result column="store_time" property="storeTime" jdbcType="VARCHAR" />
+    <result column="store_banner" property="storeBanner" jdbcType="VARCHAR" />
+    <result column="store_avatar" property="storeAvatar" jdbcType="VARCHAR" />
+    <result column="store_qq" property="storeQq" jdbcType="VARCHAR" />
+    <result column="store_phone" property="storePhone" jdbcType="VARCHAR" />
+    <result column="store_recommend" property="storeRecommend" jdbcType="TINYINT" />
+    <result column="store_credit" property="storeCredit" jdbcType="INTEGER" />
+    <result column="store_desccredit" property="storeDesccredit" jdbcType="REAL" />
+    <result column="store_servicecredit" property="storeServicecredit" jdbcType="REAL" />
+    <result column="store_deliverycredit" property="storeDeliverycredit" jdbcType="REAL" />
+    <result column="store_collect" property="storeCollect" jdbcType="INTEGER" />
+    <result column="store_sales" property="storeSales" jdbcType="INTEGER" />
+    <result column="store_free_price" property="storeFreePrice" jdbcType="DECIMAL" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, store_name, grade_id, user_id, sc_id, province_id, area_info, store_address, 
+    store_state, store_sort, store_time, store_banner, store_avatar, store_qq, store_phone, 
+    store_recommend, store_credit, store_desccredit, store_servicecredit, store_deliverycredit, 
+    store_collect, store_sales, store_free_price
+  </sql>
+
+  <select id="findStoreIdByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select id
+    from shop_store
+    where user_id = #{userId,jdbcType=INTEGER} AND store_state = 1
+  </select>
+
+  <select id="findOwnStoreId" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select id from shop_store
+    where is_own = 1 AND store_state = 1
+  </select>
+
+  <select id="findStoreInfoByStoreId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_store
+    where id = #{storeId,jdbcType=INTEGER} AND store_state = 1
+  </select>
+
+  <update id="updateStoreSalesByStoreId" parameterType="java.lang.Integer">
+    UPDATE shop_store SET store_sales = store_sales + #{storeSales} WHERE id = #{storeId}
+  </update>
+
+  <insert id="insert" parameterType="com.weking.model.shop.store.ShopStore" >
+    insert into shop_store (id, store_name, grade_id, 
+      user_id, sc_id, province_id, 
+      area_info, store_address, store_state, 
+      store_sort, store_time, store_banner, 
+      store_avatar, store_qq, store_phone, 
+      store_recommend, store_credit, store_desccredit, 
+      store_servicecredit, store_deliverycredit, store_collect, 
+      store_sales, store_free_price)
+    values (#{id,jdbcType=INTEGER}, #{storeName,jdbcType=VARCHAR}, #{gradeId,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{scId,jdbcType=INTEGER}, #{provinceId,jdbcType=INTEGER}, 
+      #{areaInfo,jdbcType=VARCHAR}, #{storeAddress,jdbcType=VARCHAR}, #{storeState,jdbcType=TINYINT}, 
+      #{storeSort,jdbcType=INTEGER}, #{storeTime,jdbcType=VARCHAR}, #{storeBanner,jdbcType=VARCHAR}, 
+      #{storeAvatar,jdbcType=VARCHAR}, #{storeQq,jdbcType=VARCHAR}, #{storePhone,jdbcType=VARCHAR}, 
+      #{storeRecommend,jdbcType=TINYINT}, #{storeCredit,jdbcType=INTEGER}, #{storeDesccredit,jdbcType=REAL}, 
+      #{storeServicecredit,jdbcType=REAL}, #{storeDeliverycredit,jdbcType=REAL}, #{storeCollect,jdbcType=INTEGER}, 
+      #{storeSales,jdbcType=INTEGER}, #{storeFreePrice,jdbcType=DECIMAL})
+  </insert>
+
+</mapper>

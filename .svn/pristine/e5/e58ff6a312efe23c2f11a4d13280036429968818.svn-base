@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.version.VersionMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.version.Version" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="version_code" property="versionCode" jdbcType="INTEGER" />
+    <result column="version_name" property="versionName" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="update_msg" property="updateMsg" jdbcType="VARCHAR" />
+    <result column="must" property="must" jdbcType="SMALLINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, type, version_code, version_name, url, update_msg, must
+  </sql>
+  
+    <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_version_info
+    where  type=#{type} AND project_name = #{projectName}
+     ORDER BY id desc limit 0,1
+  </select>
+
+</mapper>

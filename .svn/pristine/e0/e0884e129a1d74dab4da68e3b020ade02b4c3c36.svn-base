@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.OperationLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.log.OperationLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="operate_type" property="operateType" jdbcType="SMALLINT" />
+    <result column="operate_name" property="operateName" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="extend_id" property="extend_id" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, operate_type, operate_name, add_time,extend_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_operation_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_operation_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.log.OperationLog" >
+    insert into wk_operation_log (id, user_id, operate_type, 
+      operate_name, add_time,extend_id)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{operateType,jdbcType=SMALLINT}, 
+      #{operateName,jdbcType=VARCHAR}, #{addTime,jdbcType=BIGINT}, #{extend_id,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.log.OperationLog" >
+    insert into wk_operation_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="operateType != null" >
+        operate_type,
+      </if>
+      <if test="operateName != null" >
+        operate_name,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="extend_id != null" >
+        extend_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="operateType != null" >
+        #{operateType,jdbcType=SMALLINT},
+      </if>
+      <if test="operateName != null" >
+        #{operateName,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="extend_id != null" >
+        #{extend_id,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.log.OperationLog" >
+    update wk_operation_log
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="operateType != null" >
+        operate_type = #{operateType,jdbcType=SMALLINT},
+      </if>
+      <if test="operateName != null" >
+        operate_name = #{operateName,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="extend_id != null" >
+        extend_id = #{extend_id,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.log.OperationLog" >
+    update wk_operation_log
+    set user_id = #{userId,jdbcType=INTEGER},
+      operate_type = #{operateType,jdbcType=SMALLINT},
+      operate_name = #{operateName,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=BIGINT},
+      extend_id = #{extend_id,jdbcType=INTEGER},
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByUserIdAndType" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from wk_operation_log
+    WHERE user_id = #{userId} AND operate_type = #{type}
+    limit 1
+  </select>
+</mapper>

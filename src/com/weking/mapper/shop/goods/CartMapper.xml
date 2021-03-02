@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.goods.CartMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.goods.Cart" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="buyer_id" property="buyerId" jdbcType="INTEGER" />
+    <result column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+    <result column="goods_num" property="goodsNum" jdbcType="SMALLINT" />
+    <result column="goods_image" property="goodsImage" jdbcType="VARCHAR" />
+    <result column="coin_price" property="coin_price" jdbcType="DECIMAL" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, buyer_id, store_id, store_name, goods_id, goods_name, goods_price, goods_num, 
+    goods_image,coin_price
+  </sql>
+
+  <select id="selectCountByGoodsIdAndUserId" resultType="int" parameterType="java.lang.Integer" >
+    select COUNT(*)
+    from shop_cart
+    where goods_id = #{goodsId,jdbcType=INTEGER} AND buyer_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByUserIdAndGoodsId" parameterType="java.lang.Integer" >
+    delete from shop_cart
+    where buyer_id = #{userId,jdbcType=INTEGER} AND goods_id IN
+    <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+  <select id="selectListByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from shop_cart
+    where buyer_id = #{userId,jdbcType=INTEGER} ORDER BY store_id DESC
+  </select>
+
+  <select id="selectListByUserIdAndGoodsIds" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from shop_cart
+    where buyer_id = #{userId,jdbcType=INTEGER} AND goods_id IN
+    <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.shop.goods.Cart" >
+    insert into shop_cart (id, buyer_id, store_id, 
+      store_name, goods_id, goods_name, 
+      goods_price, goods_num, goods_image,coin_price
+      )
+    values (#{id,jdbcType=INTEGER}, #{buyerId,jdbcType=INTEGER}, #{storeId,jdbcType=INTEGER}, 
+      #{storeName,jdbcType=VARCHAR}, #{goodsId,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, 
+      #{goodsPrice,jdbcType=DECIMAL}, #{goodsNum,jdbcType=SMALLINT}, #{goodsImage,jdbcType=VARCHAR},
+      #{coin_price,jdbcType=DECIMAL}
+      )
+  </insert>
+
+  <update id="updateGoodsNumByGoodsId" parameterType="com.weking.model.shop.goods.Cart" >
+    update shop_cart
+    set
+    goods_num = goods_num + #{goodsNum,jdbcType=SMALLINT}
+    where buyer_id = #{userId,jdbcType=INTEGER} AND goods_id = #{goodsId,jdbcType=INTEGER}
+     <if test="goodsNum lt 0" >
+     AND goods_num > 1
+     </if>
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.shop.goods.Cart" >
+    update shop_cart
+    set buyer_id = #{buyerId,jdbcType=INTEGER},
+      store_id = #{storeId,jdbcType=INTEGER},
+      store_name = #{storeName,jdbcType=VARCHAR},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      goods_name = #{goodsName,jdbcType=VARCHAR},
+      goods_price = #{goodsPrice,jdbcType=DECIMAL},
+      goods_num = #{goodsNum,jdbcType=SMALLINT},
+      goods_image = #{goodsImage,jdbcType=VARCHAR},
+      coin_price = #{coin_price,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

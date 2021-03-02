@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.live.LiveTagMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.live.LiveTag">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="tag_name" property="tagName" jdbcType="VARCHAR"/>
+        <result column="enable" property="enable" jdbcType="SMALLINT"/>
+        <result column="sort" property="sort" jdbcType="SMALLINT"/>
+        <result column="tag_value" property="tag_value" jdbcType="SMALLINT"/>
+        <result column="en_name" property="en_name" jdbcType="VARCHAR"/>
+        <result column="ms_name" property="ms_name" jdbcType="VARCHAR"/>
+        <result column="ms_name" property="ms_name" jdbcType="VARCHAR"/>
+        <result column="tw_name" property="tw_name" jdbcType="VARCHAR"/>
+        <result column="tag_type" property="tag_type" jdbcType="TINYINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, tag_name, enable, sort,tag_value,en_name,ms_name,tw_name,tag_type
+  </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_live_tag
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.weking.model.live.LiveTag">
+    insert into wk_live_tag (id, tag_name, enable, 
+      sort,tag_value,en_name,ms_name,tw_name)
+    values (#{id,jdbcType=INTEGER}, #{tagName,jdbcType=VARCHAR}, #{enable,jdbcType=SMALLINT},
+      #{sort,jdbcType=SMALLINT}, #{tag_value,jdbcType=SMALLINT},#{en_name,jdbcType=VARCHAR},
+      #{ms_name,jdbcType=VARCHAR},#{tw_name,jdbcType=VARCHAR})
+  </insert>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_live_tag where enable = 1 and tag_value = 5 and id !=30 and tag_type = #{tag_type} ORDER BY sort DESC
+    </select>
+
+    <select id="getAllAndActivity" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_live_tag where enable = 1 and tag_value = 5  and tag_type = #{tag_type} ORDER BY sort DESC
+    </select>
+
+
+    <select id="getNewAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_live_tag where enable = 1 ORDER BY sort DESC
+    </select>
+
+    <select id="selectByTagType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_live_tag where enable = 1 and tag_type = #{tag_type} ORDER BY id ASC limit 1
+    </select>
+
+</mapper>

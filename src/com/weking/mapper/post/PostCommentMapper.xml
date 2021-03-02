@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.post.PostCommentMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.post.PostCommentInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="comment_user_id" property="comment_user_id" jdbcType="INTEGER"/>
+        <result column="post_id" property="post_id" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="reply_id" property="reply_id" jdbcType="INTEGER"/>
+        <result column="comment_type" property="comment_type" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="comment_date" property="comment_date" jdbcType="BIGINT"/>
+        <result column="comment_id" property="comment_id" jdbcType="BIGINT"/>
+        <result column="reply_user_id" property="reply_user_id" jdbcType="BIGINT"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="avatar" property="avatar" jdbcType="VARCHAR"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="INTEGER"/>
+        <result column="reply_nickname" property="reply_nickname" jdbcType="VARCHAR"/>
+        <result column="like_count" property="like_count" jdbcType="INTEGER"/>
+        <result column="is_like" property="is_like" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, comment_user_id, post_id, content, reply_id, comment_type, status, comment_date,reply_user_id,like_count
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_post_comment
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from wk_post_comment
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+
+    <insert id="insertSelective" parameterType="com.weking.model.post.PostCommentInfo">
+        insert into wk_post_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="comment_user_id != null">
+                comment_user_id,
+            </if>
+            <if test="post_id != null">
+                post_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="reply_id != null">
+                reply_id,
+            </if>
+            <if test="comment_type != null">
+                comment_type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="comment_date != null">
+                comment_date,
+            </if>
+            <if test="reply_user_id != null">
+                reply_user_id,
+            </if>
+            <if test="comment_id != null">
+                comment_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="comment_user_id != null">
+                #{comment_user_id,jdbcType=INTEGER},
+            </if>
+            <if test="post_id != null">
+                #{post_id,jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="reply_id != null">
+                #{reply_id,jdbcType=INTEGER},
+            </if>
+            <if test="comment_type != null">
+                #{comment_type,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="comment_date != null">
+                #{comment_date,jdbcType=BIGINT},
+            </if>
+            <if test="reply_user_id != null">
+                #{reply_user_id,jdbcType=BIGINT},
+            </if>
+            <if test="comment_id != null">
+                #{comment_id,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getCommentList" resultMap="BaseResultMap">
+        SELECT A.*,B.account,B.pichead_url as avatar,B.`level`,B.nickname,B.sex,C.nickname as reply_nickname
+        <if test="user_id != 0">
+            ,D.comment_id as is_like
+        </if>
+        FROM wk_post_comment A
+        INNER JOIN wk_user_info B on A.comment_user_id = B.id
+        LEFT JOIN wk_user_info C on A.reply_user_id = C.id
+        <if test="user_id != 0">
+            LEFT JOIN wk_post_comment D on A.id = D.comment_id AND D.comment_user_id = #{user_id}
+        </if>
+        WHERE A.post_id = #{post_id} AND A.comment_type = 0 AND A.status = 0
+        ORDER BY A.id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="selectCommentList" resultMap="BaseResultMap">
+        SELECT A.*
+        <if test="user_id != 0">
+            ,D.comment_id as is_like
+        </if>
+        FROM wk_post_comment A
+        <if test="user_id != 0">
+            LEFT JOIN wk_post_comment D on A.id=D.comment_id AND D.comment_user_id=#{user_id}
+        </if>
+        WHERE A.post_id = #{post_id} AND A.comment_type = 0 AND A.status = 0
+        ORDER BY A.id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="isLike" resultType="java.lang.Integer">
+      SELECT COUNT(*) as c from wk_post_comment
+      where comment_id=#{comment_id} and comment_user_id=#{userId} and comment_type=4
+    </select>
+
+    <update id="increaseLikeCount">
+        update wk_post_comment
+        <set>
+            like_count = like_count + #{qty}
+        </set>
+        where id = #{comment_id}
+    </update>
+
+    <select id="getAllCommentList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM wk_post_comment
+        WHERE post_id = #{post_id} AND status = 0
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectPostComments" resultMap="BaseResultMap">
+        SELECT id,comment_user_id,content
+        FROM wk_post_comment
+        WHERE post_id = #{post_id} AND comment_user_id != #{user_id} AND reply_user_id = 0 AND comment_type=0 AND status=0
+        LIMIT 3
+    </select>
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.game.GameFireMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.game.GameFire">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="live_id" property="liveId" jdbcType="INTEGER"/>
+        <result column="target_id" property="targetId" jdbcType="INTEGER"/>
+        <result column="bet_num" property="betNum" jdbcType="INTEGER"/>
+        <result column="add_time" property="time" jdbcType="BIGINT"/>
+        <result column="hit" property="hit" jdbcType="TINYINT"/>
+        <result column="income_coin" property="incomeCoin" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.weking.model.game.GameFire">
+    insert into wk_game_fire ( user_id, live_id, target_id, bet_num, add_time, hit, income_coin, game_type, anchor_id )
+        values
+        (#{userId,jdbcType=INTEGER},
+        #{liveId,jdbcType=INTEGER},
+        #{targetId,jdbcType=INTEGER},
+        #{betNum,jdbcType=INTEGER},
+        #{time,jdbcType=BIGINT},
+        #{hit,jdbcType=INTEGER},
+        #{incomeCoin,jdbcType=INTEGER},
+        #{gameType,jdbcType=TINYINT},
+        #{anchorId,jdbcType=TINYINT}
+      )
+  </insert>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select user_id, live_id, target_id, bet_num, add_time, hit, income_coin
+        from wk_game_fire
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getDailyWinTime" resultType="int" >
+        select count(1) from wk_game_fire where user_id = #{userId}
+        and income_coin > 0 and add_time >=  #{today}
+    </select>
+
+</mapper>

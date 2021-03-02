@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.account.UserBillMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.account.UserBill" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="extend_id" property="extendId" jdbcType="INTEGER" />
+    <result column="coin_type" property="coin_type" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, amount, type, add_time,extend_id,coin_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_user_bill
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.weking.model.account.UserBill" >
+    insert into wk_user_bill (id, user_id, amount, 
+      type, add_time,extend_id,coin_type)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{amount,jdbcType=DOUBLE},
+      #{type,jdbcType=INTEGER}, #{addTime,jdbcType=BIGINT}, #{extendId,jdbcType=INTEGER}, #{coin_type,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.account.UserBill" >
+    update wk_user_bill
+    set user_id = #{userId,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DOUBLE},
+      type = #{type,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=BIGINT},
+      extend_id = #{extendId,jdbcType=INTEGER}，
+      coin_type = #{coin_type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectBillByUserIdAndType" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from wk_user_bill
+    WHERE user_id = #{userId} AND type = #{type}
+    limit 1
+  </select>
+
+  <select id="selectListByUserIdAndType" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from wk_user_bill
+    WHERE user_id = #{userId} AND type = #{type}
+  </select>
+
+  <select id="selectBillByUserIdAndTypeToday" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from wk_user_bill
+    WHERE user_id = #{userId} AND type = #{type} AND add_time >= #{today}
+    limit 1
+  </select>
+
+</mapper>

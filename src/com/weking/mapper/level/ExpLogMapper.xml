@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.level.ExpLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.level.ExpLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="exp_num" property="expNum" jdbcType="INTEGER" />
+    <result column="exp_type" property="expType" jdbcType="TINYINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="user_type" property="userType" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, exp_num, exp_type, add_time,user_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_exp_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.weking.model.level.ExpLog" >
+    insert into wk_exp_log (id, user_id, exp_num, 
+      exp_type, add_time,user_type)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{expNum,jdbcType=INTEGER}, 
+      #{expType,jdbcType=TINYINT}, #{addTime,jdbcType=BIGINT}, #{userType,jdbcType=TINYINT})
+  </insert>
+</mapper>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.invite.InviteMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.invite.Invite" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="class_id" property="classId" jdbcType="INTEGER" />
+    <result column="frozen_id" property="frozenId" jdbcType="INTEGER" />
+    <result column="like_num" property="likeNum" jdbcType="INTEGER" />
+    <result column="appoint_num" property="appointNum" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="TINYINT" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="buy_way" property="buyWay" jdbcType="TINYINT" />
+    <result column="sincerity" property="sincerity" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="data_value" property="dataValue" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="start_time" property="startTime" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="BIGINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="lng" property="lng" jdbcType="DOUBLE" />
+    <result column="lat" property="lat" jdbcType="DOUBLE" />
+    <result column="account" property="account" jdbcType="VARCHAR"/>
+    <result column="avatar" property="avatar" jdbcType="VARCHAR"/>
+    <result column="signiture" property="signiture" jdbcType="VARCHAR"/>
+    <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, class_id, sex, city, buy_way, sincerity, remark, state, start_time,appoint_num,
+    end_time, add_time, lng, lat,frozen_id,like_num
+  </sql>
+  <select id="findInviteInfoById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />,data_value,i.id
+    from wk_invite i INNER JOIN wk_invite_data d ON i.id = d.invite_id
+    where i.id = #{id,jdbcType=INTEGER} limit 1
+  </select>
+
+  <select id="selectInviteListByUserId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />,data_value,i.id
+    from wk_invite i INNER JOIN wk_invite_data d ON i.id = d.invite_id
+    where user_id = #{userId,jdbcType=INTEGER} ORDER BY id DESC limit #{index},#{count}
+  </select>
+
+  <select id="selectInviteListByClassId" resultMap="BaseResultMap">
+    select class_id,remark,data_value,i.id,u.account,u.nickname,u.signiture,u.pichead_url as avatar,i.user_id
+    from wk_invite i INNER JOIN wk_user_info u ON i.user_id = u.id
+    LEFT JOIN wk_invite_data d ON i.id = d.invite_id
+    where class_id = #{classId,jdbcType=INTEGER} ORDER BY i.id desc limit #{index},#{count}
+  </select>
+
+  <select id="selectInviteListByInviteIds" resultMap="BaseResultMap">
+    select i.id,class_id,remark,data_value,i.id,u.account,u.nickname,u.signiture,u.pichead_url as avatar
+    from wk_invite i INNER JOIN wk_user_info u ON i.user_id = u.id
+    LEFT JOIN wk_invite_data d ON i.id = d.invite_id
+    where i.id IN
+    <foreach item="item" index="key" collection="list"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    ORDER BY id DESC
+  </select>
+
+  <select id="selectNewInviteList" resultMap="BaseResultMap">
+    select i.id,class_id,remark,data_value,i.id,u.account,u.nickname,u.signiture,u.pichead_url as avatar
+    from wk_invite i INNER JOIN wk_user_info u ON i.user_id = u.id
+    LEFT JOIN wk_invite_data d ON i.id = d.invite_id
+    ORDER BY i.id DESC limit #{index},#{count}
+  </select>
+
+
+  <delete id="deleteInviteById" parameterType="java.lang.Integer" >
+    delete from wk_invite
+    where id = #{id,jdbcType=INTEGER} AND user_id = #{userId}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.invite.Invite" useGeneratedKeys="true" keyProperty="id">
+    insert into wk_invite (id, user_id, class_id, frozen_id,
+      sex, city, buy_way, 
+      sincerity, `remark`,
+      start_time, end_time, add_time, 
+      lng, lat)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, #{frozenId,jdbcType=INTEGER},
+      #{sex,jdbcType=TINYINT}, #{city,jdbcType=VARCHAR}, #{buyWay,jdbcType=TINYINT}, 
+      #{sincerity,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR},
+      #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{addTime,jdbcType=BIGINT}, 
+      #{lng,jdbcType=DOUBLE}, #{lat,jdbcType=DOUBLE})
+  </insert>
+  <update id="increaseAppointNumById" parameterType="com.weking.model.invite.Invite" >
+    update wk_invite
+    set appoint_num = appoint_num + 1
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.invite.Invite" >
+    update wk_invite
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="frozenId != null" >
+        frozen_id = #{frozenId,jdbcType=INTEGER},
+      </if>
+      <if test="appointNum != null" >
+        appoint_num = #{appointNum,jdbcType=INTEGER},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=TINYINT},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="buyWay != null" >
+        buy_way = #{buyWay,jdbcType=TINYINT},
+      </if>
+      <if test="sincerity != null" >
+        sincerity = #{sincerity,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+      <if test="lng != null" >
+        lng = #{lng,jdbcType=DOUBLE},
+      </if>
+      <if test="lat != null" >
+        lat = #{lat,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateLikeNumByInviteId" parameterType="int" >
+    update wk_invite SET like_num = like_num + #{likeNum,jdbcType=INTEGER}
+    where id = #{inviteId,jdbcType=INTEGER}
+  </update>
+</mapper>

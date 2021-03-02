@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.ConsumeInfoMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.log.ConsumeInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="send_id" property="sendId" jdbcType="INTEGER"/>
+        <result column="receive_id" property="receiveId" jdbcType="INTEGER"/>
+        <result column="send_diamond" property="sendDiamond" jdbcType="INTEGER"/>
+        <result column="send_time" property="sendTime" jdbcType="BIGINT"/>
+        <result column="live_record_id" property="liveRecordId" jdbcType="INTEGER"/>
+        <result column="gift_id" property="giftId" jdbcType="INTEGER"/>
+        <result column="sex" property="sex" jdbcType="INTEGER"/>
+        <result column="level" property="level" jdbcType="INTEGER"/>
+        <result column="nickname" property="nickname" jdbcType="VARCHAR"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="pichead_url" property="picheadUrl" jdbcType="VARCHAR"/>
+        <result column="ratio" property="ratio" jdbcType="DECIMAL"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="buy_type" property="buy_type" jdbcType="INTEGER"/>
+        <result column="is_deduct" property="is_deduct" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, send_id, receive_id, send_diamond, send_time, live_record_id, gift_id,ratio,price,buy_type
+  </sql>
+
+    <select id="getThisTimeTotalTiecket" resultType="long">
+     select  ifnull(sum(send_diamond), 0) as send_diamond
+    from wk_consume_log
+    where receive_id = #{anchorid} and live_record_id =  #{liveLogid}
+  </select>
+
+
+    <select id="getTopThreeSender" resultType="map">
+      select  t2.pichead_url pic_url,t.send_id, ifnull(sum(t.send_diamond),0) totalSend
+      from wk_consume_log t
+      left join wk_user_info t2 on t.send_id = t2.id
+     where  t.receive_id = #{anchorid} and t.live_record_id =  #{liveLogid}
+     GROUP BY t.send_id 
+     ORDER BY totalSend DESC LIMIT 0,3
+     
+  </select>
+
+    <select id="getCurrentConsumptionList" resultMap="BaseResultMap">
+        select t2.pichead_url,t2.level,t2.sex,t2.nickname,t2.account,t.send_id, ifnull(sum(t.send_diamond),0)
+        send_diamond
+        from wk_consume_log t
+        left join wk_user_info t2 on t.send_id = t2.id
+        where t.receive_id&lt;> 0 and t.live_record_id = #{liveLogId}
+        GROUP BY t.send_id
+        ORDER BY send_diamond DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getConsumeOrder" resultType="Map" parameterType="java.lang.Integer">
+    SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+    from wk_consume_log a INNER JOIN wk_user_info b on a.send_id=b.id WHERE Left(a.send_time,6) = #{sendTime} and b.role=0
+    GROUP BY a.send_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+    <select id="getIncomeOrder" resultType="Map" parameterType="java.lang.Integer">
+    SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+    from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE Left(a.send_time,6) = #{sendTime}  and b.role=0
+    GROUP BY a.receive_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+    <select id="getConsumeOrderByDay" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.send_id=b.id WHERE a.send_time &gt;= #{beginTime} and a.send_time &lt;= #{endTime} and b.role=0
+        GROUP BY a.send_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getIncomeOrderByDay" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime} and a.send_time &lt;= #{endTime}  and b.role=0
+        GROUP BY a.receive_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getLastPayTicket" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List"/>
+        from wk_consume_log
+        where send_id = #{user_id} and gift_id = 1
+        ORDER BY send_time DESC LIMIT 0,1
+    </select>
+
+    <select id="getPayTicket" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List"/>
+        from wk_consume_log
+        where send_id = #{user_id} and gift_id = 1 and live_record_id=#{live_id} and buy_type = #{buy_type} limit 1
+    </select>
+
+    <select id="getPayTicketByAnchorId" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List"/>
+        from wk_consume_log
+        where send_id = #{user_id} and gift_id = 1 and receive_id=#{anchor_id} and buy_type = #{buy_type} order by id desc limit 1
+    </select>
+
+
+    <insert id="insertSelective" parameterType="com.weking.model.log.ConsumeInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into wk_consume_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="sendId != null">
+                send_id,
+            </if>
+            <if test="receiveId != null">
+                receive_id,
+            </if>
+            <if test="sendDiamond != null">
+                send_diamond,
+            </if>
+            <if test="receiveTicket != null">
+                receive_ticket,
+            </if>
+            <if test="sendTime != null">
+                send_time,
+            </if>
+            <if test="liveRecordId != null">
+                live_record_id,
+            </if>
+            <if test="giftId != null">
+                gift_id,
+            </if>
+            <if test="ratio != null">
+                ratio,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="buy_type != null">
+                buy_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="sendId != null">
+                #{sendId,jdbcType=INTEGER},
+            </if>
+            <if test="receiveId != null">
+                #{receiveId,jdbcType=INTEGER},
+            </if>
+            <if test="sendDiamond != null">
+                #{sendDiamond,jdbcType=INTEGER},
+            </if>
+            <if test="receiveTicket != null">
+                #{receiveTicket,jdbcType=INTEGER},
+            </if>
+            <if test="sendTime != null">
+                #{sendTime,jdbcType=BIGINT},
+            </if>
+            <if test="liveRecordId != null">
+                #{liveRecordId,jdbcType=INTEGER},
+            </if>
+            <if test="giftId != null">
+                #{giftId,jdbcType=INTEGER},
+            </if>
+            <if test="ratio != null">
+                #{ratio,jdbcType=DECIMAL},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="buy_type != null">
+                #{buy_type,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getDailyConsumeTime" resultType="int">
+        select count(1) from wk_consume_log where send_id = #{userId}
+        and send_time >=  #{today}
+    </select>
+
+
+    <select id="getGiftNumRank" resultType="Map" parameterType="java.lang.Integer">
+        SELECT count(*) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime}
+        and a.send_time &lt;= #{endTime} and a.gift_id = #{giftId} and b.role=0
+        GROUP BY a.receive_id ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getGiftCountBoat" resultType="Map" parameterType="java.lang.Integer">
+        SELECT sum(receive_ticket) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime}
+        and a.send_time &lt;= #{endTime} and a.gift_id in (139,140,142,143) and b.role=0
+        GROUP BY a.receive_id ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+
+    <select id="getIncomeOrderBySection" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime} and a.send_time &lt;= #{endTime} and a.gift_id in
+        <foreach collection="list" item="tempId" open="(" close=")" separator=",">
+            #{tempId}
+        </foreach>
+         and b.role=0
+        GROUP BY a.receive_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+
+    <select id="getConsumeOrderBySection" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.send_id=b.id WHERE a.send_time &gt;= #{beginTime} and a.send_time &lt;= #{endTime} and a.gift_id in
+        <foreach collection="list" item="tempId" open="(" close=")" separator=",">
+            #{tempId}
+        </foreach>
+          and b.role=0
+        GROUP BY a.send_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+
+    <select id="getIncomeOrderBySectionOne" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime} and a.send_time &lt;= #{endTime} and a.gift_id = #{giftId} and b.role=0
+        GROUP BY a.receive_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+
+    <select id="getConsumeOrderBySectionOne" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.send_id=b.id WHERE a.send_time &gt;= #{beginTime} and a.send_time &lt;= #{endTime} and a.gift_id = #{giftId}  and b.role=0
+        GROUP BY a.send_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getGuardIncome" resultType="Map" parameterType="java.lang.Integer">
+       SELECT send_time,receive_ticket FROM wk_consume_log WHERE gift_id=6
+       AND receive_id=#{receive_id} AND send_time &gt;= #{beginTime} and send_time &lt;= #{endTime}
+         ORDER BY send_time DESC;
+    </select>
+
+
+    <select id="getIncomeOrderBySectionAndLevel" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime}
+        and b.anchor_level &lt; 55
+        and a.send_time &lt;= #{endTime} and a.gift_id in
+        <foreach collection="list" item="tempId" open="(" close=")" separator=",">
+            #{tempId}
+        </foreach>
+        and b.role=0
+        GROUP BY a.receive_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getIncomeOrderBySectionAndAnchorLevel" resultType="Map" parameterType="java.lang.Integer">
+        SELECT SUM(a.send_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname
+        from wk_consume_log a INNER JOIN wk_user_info b on a.receive_id=b.id WHERE a.send_time &gt;= #{beginTime}
+        and b.anchor_level >= 56
+        and a.send_time &lt;= #{endTime} and a.gift_id in
+        <foreach collection="list" item="tempId" open="(" close=")" separator=",">
+            #{tempId}
+        </foreach>
+        and b.role=0
+        GROUP BY a.receive_id
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+
+    <select id="getConsumeByUserId" resultType="Map" parameterType="java.lang.Integer">
+      SELECT u.account,u.nickname,l.send_diamond,send_time ,
+      l.gift_id FROM wk_consume_log l LEFT  JOIN wk_user_info u ON l.receive_id=u.id
+      WHERE l.send_id=#{send_id} ORDER BY send_time DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getConsumeByUserIdAndTime" resultType="Map" parameterType="java.lang.Integer">
+      SELECT u.account,u.nickname,l.send_diamond,send_time ,l.ratio,l.price,l.live_record_id,l.send_id,
+      l.gift_id FROM wk_consume_log l LEFT  JOIN wk_user_info u ON l.receive_id=u.id
+      WHERE l.send_id=#{send_id}
+        AND send_time &gt;= #{beginTime}
+    and send_time &lt;= #{endTime}
+
+       ORDER BY send_time DESC LIMIT #{offset},#{limit}
+    </select>
+
+
+    <update id="updateLiveIdById">
+    update wk_consume_log
+    set live_record_id = #{live_id,jdbcType=INTEGER}
+    where id= #{id,jdbcType=INTEGER}
+  </update>
+
+
+    <select id="payNowCancel" resultType="Map" parameterType="java.lang.Integer">
+
+        SELECT u.account,A.* FROM (SELECT id,send_id,sum(l.send_diamond ) as send_diamond FROM wk_consume_log l WHERE
+        l.is_deduct=0
+        and send_time &lt;= #{sendTime}
+        group by send_id ) A LEFT  JOIN wk_user_info u ON A.send_id=u.id
+
+    </select>
+
+
+    <update id="updateConsumeIsDeduct">
+    update wk_consume_log
+    set is_deduct = 1
+    where send_id= #{send_id,jdbcType=INTEGER}  and send_time &lt;= #{sendTime}
+  </update>
+
+
+
+
+</mapper>

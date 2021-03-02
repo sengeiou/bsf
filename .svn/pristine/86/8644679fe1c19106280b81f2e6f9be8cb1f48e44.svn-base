@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.invite.InviteLikeMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.invite.InviteLike" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="invite_id" property="inviteId" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, invite_id, add_time
+  </sql>
+  <select id="findByUserIdAndInviteId" resultType="int" parameterType="java.lang.Integer" >
+    select id from wk_invite_like
+    where user_id = #{userId} AND invite_id = #{inviteId}
+  </select>
+  <delete id="deleteByUserIdAndInviteId" parameterType="java.lang.Integer" >
+    delete from wk_invite_like
+    where user_id = #{userId} AND invite_id = #{inviteId}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.invite.InviteLike" >
+    insert into wk_invite_like (id, user_id, invite_id, 
+      add_time)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{inviteId,jdbcType=INTEGER}, 
+      #{addTime,jdbcType=BIGINT})
+  </insert>
+</mapper>

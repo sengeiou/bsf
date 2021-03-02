@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.vip.VipLevelMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.vip.VipLevel" >
+    <id column="id" property="id" jdbcType="SMALLINT" />
+    <result column="level" property="level" jdbcType="SMALLINT" />
+    <result column="level_name" property="levelName" jdbcType="VARCHAR" />
+    <result column="experience" property="experience" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, level, level_name, experience
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Short" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_vip_level
+    where id = #{id,jdbcType=SMALLINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Short" >
+    delete from wk_vip_level
+    where id = #{id,jdbcType=SMALLINT}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.vip.VipLevel" >
+    insert into wk_vip_level (id, level, level_name, 
+      experience)
+    values (#{id,jdbcType=SMALLINT}, #{level,jdbcType=SMALLINT}, #{levelName,jdbcType=VARCHAR}, 
+      #{experience,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.vip.VipLevel" >
+    insert into wk_vip_level
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="levelName != null" >
+        level_name,
+      </if>
+      <if test="experience != null" >
+        experience,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=SMALLINT},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=SMALLINT},
+      </if>
+      <if test="levelName != null" >
+        #{levelName,jdbcType=VARCHAR},
+      </if>
+      <if test="experience != null" >
+        #{experience,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.vip.VipLevel" >
+    update wk_vip_level
+    <set >
+      <if test="level != null" >
+        level = #{level,jdbcType=SMALLINT},
+      </if>
+      <if test="levelName != null" >
+        level_name = #{levelName,jdbcType=VARCHAR},
+      </if>
+      <if test="experience != null" >
+        experience = #{experience,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.vip.VipLevel" >
+    update wk_vip_level
+    set level = #{level,jdbcType=SMALLINT},
+      level_name = #{levelName,jdbcType=VARCHAR},
+      experience = #{experience,jdbcType=INTEGER}
+    where id = #{id,jdbcType=SMALLINT}
+  </update>
+
+
+  <select id="selectByAllVipLevel" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_vip_level ORDER BY `level` ASC
+  </select>
+</mapper>

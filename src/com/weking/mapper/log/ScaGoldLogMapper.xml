@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.ScaGoldLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.log.ScaGoldLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="orig_num" property="origNum" jdbcType="DECIMAL" />
+    <result column="conv_num" property="convNum" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, orig_num, conv_num, type, add_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_scagold_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from wk_scagold_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.log.ScaGoldLog" >
+    insert into wk_scagold_log (id, user_id, orig_num, 
+      conv_num, type, add_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{origNum,jdbcType=DECIMAL}, 
+      #{convNum,jdbcType=DECIMAL}, #{type,jdbcType=INTEGER}, #{addTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.log.ScaGoldLog" >
+    insert into wk_scagold_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="origNum != null" >
+        orig_num,
+      </if>
+      <if test="convNum != null" >
+        conv_num,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="origNum != null" >
+        #{origNum,jdbcType=DECIMAL},
+      </if>
+      <if test="convNum != null" >
+        #{convNum,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.log.ScaGoldLog" >
+    update wk_scagold_log
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="origNum != null" >
+        orig_num = #{origNum,jdbcType=DECIMAL},
+      </if>
+      <if test="convNum != null" >
+        conv_num = #{convNum,jdbcType=DECIMAL},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.log.ScaGoldLog" >
+    update wk_scagold_log
+    set user_id = #{userId,jdbcType=INTEGER},
+      orig_num = #{origNum,jdbcType=DECIMAL},
+      conv_num = #{convNum,jdbcType=DECIMAL},
+      type = #{type,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectScaGoldLogsByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from wk_scagold_log
+    where user_id = #{userId}
+    ORDER BY id DESC
+    limit #{index},#{count}
+  </select>
+
+
+</mapper>

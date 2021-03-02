@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.pocket.PocketInfoMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.pocket.PocketInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="total_ticket" property="totalTicket" jdbcType="BIGINT"/>
+        <result column="total_diamond" property="totalDiamond" jdbcType="INTEGER"/>
+        <result column="free_diamond" property="freeDiamond" jdbcType="INTEGER"/>
+        <result column="total_money" property="totalMoney" jdbcType="DOUBLE"/>
+        <result column="all_diamond" property="all_diamond" jdbcType="BIGINT"/>
+        <result column="sca_gold" property="sca_gold" jdbcType="DECIMAL"/>
+        <result column="all_sca_gold" property="all_sca_gold" jdbcType="DECIMAL"/>
+    </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, total_ticket, total_diamond, total_money,all_diamond,sca_gold,all_sca_gold,free_diamond
+  </sql>
+
+  <update id="deductDiamondByUserid">
+    update wk_pocket
+    set  total_diamond = total_diamond - #{diamond}
+    where user_id = #{userid} AND total_diamond>=#{diamond}
+  </update>
+
+
+    <update id="deductFreeDiamondByUserId">
+    update wk_pocket
+    set  free_diamond = free_diamond - #{diamond}
+    where user_id = #{userId} AND free_diamond>=#{diamond}
+  </update>
+
+
+    <select id="batchSelectUsersDiamond" resultMap="BaseResultMap">
+        SELECT user_id,total_diamond
+        FROM wk_pocket
+        where user_id in
+        <foreach collection="map" index="key" item="value" separator="," open="(" close=")">
+            #{value}
+        </foreach>
+    </select>
+
+    <update id="batchIncreaseDiamond">
+        update wk_pocket
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix=" all_diamond = case" suffix="ELSE all_diamond - total_diamond end,">
+                <foreach collection="map" item="value" index="key">
+                    <if test="value != null">
+                        when user_id = #{key}
+                        <if test="value &lt; 0">
+                            AND total_diamond  >= -#{value}
+                        </if>
+                        then all_diamond + #{value}
+                    </if>
+                </foreach>
+            </trim>
+
+            <trim prefix="total_diamond = case" suffix="ELSE 0 end,">
+                <foreach collection="map" item="value" index="key">
+                    <if test="value != null">
+                        when user_id = #{key}
+                        <if test="value &lt; 0">
+                            AND total_diamond  >= -#{value}
+                        </if>
+                        then total_diamond + #{value}
+                    </if>
+                </foreach>
+            </trim>
+
+        </trim>
+        where user_id in
+        <foreach collection="map" index="key" item="value" separator="," open="(" close=")">
+            #{key}
+        </foreach>
+    </update>
+
+    <update id="deductAllDiamondByUserId">
+        update wk_pocket
+        set  total_diamond = total_diamond - #{diamond},all_diamond=all_diamond - #{diamond}
+        where user_id = #{userid} AND total_diamond >= #{diamond}
+    </update>
+
+    <update id="frozenDiamondByUserId">
+        update wk_pocket
+        set  total_diamond = total_diamond - #{diamond},frozen_diamond = frozen_diamond + #{diamond}
+        where user_id = #{userId} AND total_diamond >= #{diamond}
+    </update>
+
+    <update id="deductFrozenByUserId">
+        update wk_pocket
+        set  frozen_diamond = frozen_diamond - #{diamond}
+        where user_id = #{userId} AND frozen_diamond >= #{diamond}
+    </update>
+
+    <update id="backFrozenByUserId">
+        update wk_pocket
+        set  frozen_diamond = frozen_diamond - #{diamond},total_diamond = total_diamond + #{diamond}
+        where user_id = #{userId} AND frozen_diamond >= #{diamond}
+    </update>
+
+  <update id="increaseDiamondByUserId">
+    update wk_pocket
+    set  total_diamond = total_diamond + #{diamond},all_diamond=all_diamond + #{diamond}
+    where user_id = #{userId}
+  </update>
+
+
+
+    <update id="increaseFreeDiamondByUserId">
+    update wk_pocket
+    set  free_diamond = free_diamond + #{diamond},all_diamond=all_diamond + #{diamond}
+    where user_id = #{userId}
+  </update>
+
+  <update id="increaseTicketByUserid">
+    update wk_pocket
+    set  total_ticket = total_ticket + #{ticket} , total_money = total_money+ #{ticket}
+    where user_id = #{userid}
+  </update>
+
+  <select id="getAnchorTicketbyid" resultType="int" parameterType="java.lang.Integer">
+    select 
+    total_ticket
+    from wk_pocket
+    where user_id = #{userid}
+  </select>
+
+  <select id="getAnchorMoneyByUserId" resultType="int" parameterType="java.lang.Integer">
+    select
+    total_money
+    from wk_pocket
+    where user_id = #{userid}
+  </select>
+
+    <select id="getSenderLeftDiamondbyid" resultType="int" parameterType="java.lang.Integer">
+    select 
+    total_diamond
+    from wk_pocket
+    where user_id = #{userid}
+  </select>
+
+    <select id="selectByUserid" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_pocket
+        where user_id = #{userid,jdbcType=INTEGER}
+    </select>
+
+  <insert id="insert" parameterType="com.weking.model.pocket.PocketInfo">
+    insert into wk_pocket (id, user_id, total_ticket, 
+      total_diamond, total_money,all_diamond,sca_gold,all_sca_gold,free_diamond)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{totalTicket,jdbcType=BIGINT}, 
+      #{totalDiamond,jdbcType=INTEGER}, #{totalMoney,jdbcType=DOUBLE}, #{all_diamond,jdbcType=BIGINT},
+      #{sca_gold,jdbcType=DECIMAL}, #{all_sca_gold,jdbcType=DECIMAL},#{freeDiamond,jdbcType=INTEGER})
+  </insert>
+
+    <update id="batchIncreaseDiamondByAccount">
+        UPDATE wk_pocket p INNER JOIN wk_user_info u ON p.user_id = u.id
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="total_diamond = case" suffix="end,">
+                <foreach collection="map" item="value" index="key">
+                    <if test="value != null">
+                        when u.account = #{key}
+
+                        then total_diamond + #{value}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix=" all_diamond = case" suffix="end,">
+                <foreach collection="map" item="value" index="key">
+                    <if test="value != null">
+                        when u.account = #{key}
+
+                        then all_diamond + #{value}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where u.account in
+        <foreach collection="map" index="key" item="value" separator="," open="(" close=")">
+            #{key}
+        </foreach>
+    </update>
+
+
+    <select id="getTotalTicketOrder" resultType="Map" parameterType="java.lang.Integer" >
+        SELECT a.total_ticket as diff,b.account,b.pichead_url as avatar,b.nickname,b.level,b.id
+        from wk_pocket a INNER JOIN wk_user_info b on a.user_id=b.id WHERE b.role=0
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="getContributionOrder" resultType="Map" parameterType="java.lang.Integer" >
+        SELECT (a.all_diamond - a.total_diamond - a.free_diamond) as diff,b.account,b.pichead_url as avatar,b.nickname,b.level,b.id
+        from wk_pocket a INNER JOIN wk_user_info b on a.user_id=b.id WHERE b.role=0
+        ORDER BY diff DESC LIMIT #{offset},#{limit}
+    </select>
+
+    <update id="updateScaGoldByUserId" >
+        update wk_pocket
+        set  sca_gold = sca_gold + #{sca_gold},all_sca_gold = all_sca_gold + #{sca_gold}
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateUserScaGoldByUserId" >
+        update wk_pocket
+        set  sca_gold = sca_gold + #{sca_gold}
+        where user_id = #{userId}
+    </update>
+
+    <select id="selectScaGoldUser" resultType="Map">
+        SELECT user_id,sca_gold
+        FROM wk_pocket
+        WHERE sca_gold > 0
+    </select>
+
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.linklog.LinkLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.linklog.LinkLog" >
+    <id column="link_id" property="linkId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="to_uid" property="toUid" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="BIGINT" />
+    <result column="islink" property="islink" jdbcType="BIT" />
+    <result column="stream_id" property="stream_id" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    link_id, user_id, to_uid, start_time, end_time, islink,stream_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_link_log
+    where link_id = #{linkId,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.linklog.LinkLog" >
+    insert into wk_link_log (link_id, user_id, to_uid, 
+      start_time, end_time, islink
+      )
+    values (#{linkId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{toUid,jdbcType=INTEGER}, 
+      #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{islink,jdbcType=BIT}
+      )
+  </insert>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.invite.InviteDataMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.invite.InviteData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="invite_id" property="inviteId" jdbcType="INTEGER" />
+    <result column="data_key" property="dataKey" jdbcType="VARCHAR" />
+    <result column="data_value" property="dataValue" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, invite_id, data_key, data_value
+  </sql>
+  <select id="selectByDataValueListByDataKeyAndInviteId" resultType="String" parameterType="java.lang.Integer" >
+    select data_value
+    from wk_invite_data
+    where invite_id = #{inviteId,jdbcType=INTEGER} AND data_key = #{dataKey,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_invite_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="batchInsert" parameterType="com.weking.model.invite.InviteData" >
+    insert into wk_invite_data (invite_id, data_key,
+      data_value)
+    values
+    <foreach collection ="list" item="data" index= "index" separator =",">
+      (#{data.inviteId,jdbcType=INTEGER}, #{data.dataKey,jdbcType=VARCHAR},
+      #{data.dataValue,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insert" parameterType="com.weking.model.invite.InviteData" >
+    insert into wk_invite_data (invite_id, data_key,data_value)
+    values(#{inviteId,jdbcType=INTEGER}, #{dataKey,jdbcType=VARCHAR},
+      #{dataValue,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.weking.model.invite.InviteData" >
+    insert into wk_invite_data
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="inviteId != null" >
+        invite_id,
+      </if>
+      <if test="dataKey != null" >
+        data_key,
+      </if>
+      <if test="dataValue != null" >
+        data_value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="inviteId != null" >
+        #{inviteId,jdbcType=INTEGER},
+      </if>
+      <if test="dataKey != null" >
+        #{dataKey,jdbcType=VARCHAR},
+      </if>
+      <if test="dataValue != null" >
+        #{dataValue,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateDataValueByInviteId" parameterType="com.weking.model.invite.InviteData" >
+    update wk_invite_data SET data_value = #{dataValue,jdbcType=VARCHAR}
+    where invite_id = #{inviteId,jdbcType=INTEGER} AND  data_key = #{dataKey,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.invite.InviteData" >
+    update wk_invite_data
+    set invite_id = #{inviteId,jdbcType=INTEGER},
+      data_key = #{dataKey,jdbcType=VARCHAR},
+      data_value = #{dataValue,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

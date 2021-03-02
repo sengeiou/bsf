@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.order.OrderPayMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.order.OrderPay" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="pay_sn" property="paySn" jdbcType="BIGINT" />
+    <result column="buyer_id" property="buyerId" jdbcType="INTEGER" />
+    <result column="api_pay_state" property="apiPayState" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, pay_sn, buyer_id, api_pay_state
+  </sql>
+
+  <insert id="insert" parameterType="com.weking.model.shop.order.OrderPay" useGeneratedKeys="true" keyProperty="id">
+    insert into shop_order_pay (id, pay_sn, buyer_id)
+    values (#{id,jdbcType=INTEGER}, #{paySn,jdbcType=BIGINT}, #{buyerId,jdbcType=INTEGER})
+  </insert>
+
+  <update id="updatePayState" parameterType="java.lang.Integer">
+    UPDATE shop_order_pay SET api_pay_state = '1' WHERE pay_sn = #{paySn,jdbcType=BIGINT}
+  </update>
+
+</mapper>

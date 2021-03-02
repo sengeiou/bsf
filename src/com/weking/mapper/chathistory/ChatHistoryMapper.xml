@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.chathistory.ChatHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.chathistory.ChatHistory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="rec_user_id" property="recUserId" jdbcType="INTEGER" />
+    <result column="chat_content" property="chatContent" jdbcType="VARCHAR" />
+    <result column="chat_time" property="chatTime" jdbcType="BIGINT" />
+    <result column="statue" property="statue" jdbcType="INTEGER" />
+    <result column="message_id" property="messageId" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="pichead_url" property="picheadUrl" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="msg_type" property="msgType" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, rec_user_id, chat_content, chat_time,statue,message_id
+  </sql>
+
+  <select id="selectOfficeChatList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select h.id,h.chat_content, h.chat_time,h.message_id,u.nickname,u.account,u.pichead_url,u.level,u.sex
+    from wk_chat_history h INNER JOIN wk_user_info u ON h.user_id=u.id
+    where statue = 2 AND h.rec_user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  
+   <select id="selectTypeMsg" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_chat_history
+    where rec_user_id = #{recUserId,jdbcType=BIGINT} and statue = #{statue,jdbcType=BIGINT}
+  </select>
+  
+  <insert id="insert" parameterType="com.weking.model.chathistory.ChatHistory" >
+    insert into wk_chat_history (id, user_id, rec_user_id, 
+      chat_content,message_id,chat_time, msg_type)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{recUserId,jdbcType=INTEGER}, 
+      #{chatContent,jdbcType=VARCHAR},#{messageId,jdbcType=VARCHAR}, #{chatTime,jdbcType=BIGINT}, #{msgType,jdbcType=TINYINT})
+  </insert>
+  
+  <update id="updateStatic" parameterType="java.lang.Long" >
+    update wk_chat_history SET statue = 1 where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateSystemState" parameterType="java.lang.Long" >
+    update wk_chat_history SET statue = 3 where rec_user_id = #{recUserId,jdbcType=INTEGER} AND message_id = #{messageId}
+  </update>
+
+  <select id="findSystemMsg" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_chat_history
+    where (user_id = #{userId,jdbcType=INTEGER} AND rec_user_id = 0)
+    OR (user_id = 0 AND rec_user_id = #{userId,jdbcType=INTEGER})
+    OR (user_id = 0 AND rec_user_id = 0)
+    order BY id DESC limit 1
+  </select>
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.order.PaymentMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.order.Payment" >
+    <id column="id" property="id" jdbcType="TINYINT" />
+    <result column="payment_code" property="paymentCode" jdbcType="CHAR" />
+    <result column="payment_name" property="paymentName" jdbcType="CHAR" />
+    <result column="payment_state" property="paymentState" jdbcType="CHAR" />
+    <result column="payment_config" property="paymentConfig" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, payment_code, payment_name, payment_state,payment_config
+  </sql>
+  <select id="findByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Byte" >
+    select id, payment_code
+    from shop_payment
+    where id = #{id,jdbcType=TINYINT} AND payment_state = '1'
+  </select>
+</mapper>

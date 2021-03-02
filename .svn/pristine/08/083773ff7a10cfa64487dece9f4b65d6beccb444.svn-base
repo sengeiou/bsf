@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.post.PostViewLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.post.PostViewLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="post_id" property="postId" jdbcType="INTEGER" />
+    <result column="poster_id" property="posterId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="view_num" property="viewNum" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, post_id, poster_id, user_id, view_num, add_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_post_view_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from wk_post_view_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insert" parameterType="com.weking.model.post.PostViewLog" >
+    insert into wk_post_view_log (id, post_id, poster_id, user_id, view_num, add_time)
+    values (#{id,jdbcType=BIGINT}, #{postId,jdbcType=INTEGER}, #{posterId,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{viewNum,jdbcType=INTEGER}, #{addTime,jdbcType=BIGINT}
+      )
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.weking.model.post.PostViewLog" >
+    insert into wk_post_view_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="postId != null" >
+        post_id,
+      </if>
+      <if test="posterId != null" >
+        poster_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="viewNum != null" >
+        view_num,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="postId != null" >
+        #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="posterId != null" >
+        #{posterId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="viewNum != null" >
+        #{viewNum,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.post.PostViewLog" >
+    update wk_post_view_log
+    <set >
+      <if test="postId != null" >
+        post_id = #{postId,jdbcType=INTEGER},
+      </if>
+      <if test="posterId != null" >
+        poster_id = #{posterId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="viewNum != null" >
+        view_num = #{viewNum,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.post.PostViewLog" >
+    update wk_post_view_log
+    set post_id = #{postId,jdbcType=INTEGER},
+      poster_id = #{posterId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      view_num = #{viewNum,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

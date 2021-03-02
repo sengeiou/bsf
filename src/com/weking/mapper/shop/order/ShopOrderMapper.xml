@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.order.ShopOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.order.ShopOrder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_sn" property="orderSn" jdbcType="BIGINT" />
+    <result column="pay_sn" property="paySn" jdbcType="BIGINT" />
+    <result column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="buyer_id" property="buyerId" jdbcType="INTEGER" />
+    <result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="payment_code" property="paymentCode" jdbcType="CHAR" />
+    <result column="payment_time" property="paymentTime" jdbcType="BIGINT" />
+    <result column="finnshed_time" property="finnshedTime" jdbcType="BIGINT" />
+    <result column="goods_amount" property="goodsAmount" jdbcType="DECIMAL" />
+    <result column="order_amount" property="orderAmount" jdbcType="DECIMAL" />
+    <result column="shipping_fee" property="shippingFee" jdbcType="DECIMAL" />
+    <result column="evaluation_state" property="evaluationState" jdbcType="TINYINT" />
+    <result column="order_state" property="orderState" jdbcType="TINYINT" />
+    <result column="refund_state" property="refundState" jdbcType="BIT" />
+    <result column="lock_state" property="lockState" jdbcType="BIT" />
+    <result column="delete_state" property="deleteState" jdbcType="TINYINT" />
+    <result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
+    <result column="shipping_code" property="shippingCode" jdbcType="VARCHAR" />
+    <result column="shipping_company" property="shipping_company" jdbcType="VARCHAR" />
+    <result column="delivery_time" property="delivery_time" jdbcType="BIGINT" />
+    <result column="coin_amount" property="coin_amount" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_sn, pay_sn, store_id, store_name, buyer_id, buyer_name, add_time,
+    payment_code, payment_time, finnshed_time, goods_amount, order_amount, shipping_fee, 
+    evaluation_state, order_state, refund_state, lock_state, delete_state, refund_amount, 
+    shipping_code,shipping_company,delivery_time,coin_amount
+  </sql>
+  <select id="findByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_order
+    where id = #{id,jdbcType=INTEGER} AND buyer_id = #{userId,jdbcType=INTEGER} AND delete_state = 0
+  </select>
+
+  <select id="selectOrderByPaySn" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from shop_order
+    where buyer_id = #{userId,jdbcType=INTEGER} AND pay_sn = #{paySn,jdbcType=BIGINT} AND order_state = 10 AND delete_state = 0
+  </select>
+
+  <select id="selectNotPayOrderByList" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from shop_order
+    where order_state = 10 AND delete_state = 0 AND add_time &lt;= #{addTime}
+  </select>
+
+  <select id="selectShopOrderListByPaySn" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from shop_order
+    where buyer_id = #{userId,jdbcType=INTEGER} AND pay_sn = #{paySn,jdbcType=BIGINT} AND order_state = 10 AND delete_state = 0
+  </select>
+
+  <select id="selectUserOrderList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from shop_order
+    where buyer_id = #{userId,jdbcType=INTEGER} AND delete_state = 0
+    <if test="orderState != 100" >
+      AND order_state = #{orderState,jdbcType=INTEGER}
+    </if>
+    <if test="orderState == 40" >
+      AND evaluation_state = 0
+    </if>
+    ORDER BY id DESC limit #{index,jdbcType=INTEGER},#{count,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.shop.order.ShopOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into shop_order (id, order_sn, pay_sn, 
+      store_id, store_name, buyer_id, 
+      buyer_name, add_time, payment_code, payment_time,
+      goods_amount, order_amount, shipping_fee,coin_amount)
+    values (#{id,jdbcType=INTEGER}, #{orderSn,jdbcType=BIGINT}, #{paySn,jdbcType=BIGINT}, 
+      #{storeId,jdbcType=INTEGER}, #{storeName,jdbcType=VARCHAR}, #{buyerId,jdbcType=INTEGER}, 
+      #{buyerName,jdbcType=VARCHAR}, #{addTime,jdbcType=BIGINT},
+      #{paymentCode,jdbcType=CHAR}, #{paymentTime,jdbcType=BIGINT},
+      #{goodsAmount,jdbcType=DECIMAL}, #{orderAmount,jdbcType=DECIMAL}, #{shippingFee,jdbcType=DECIMAL},
+      #{coin_amount,jdbcType=DECIMAL})
+  </insert>
+
+  <update id="updateShopOrderStateByPaySn" parameterType="java.lang.Integer">
+    UPDATE shop_order SET payment_time = #{paymentTime,jdbcType=BIGINT},order_state = 20 WHERE pay_sn = #{paySn,jdbcType=BIGINT}
+  </update>
+
+  <update id="cancelOrderByOrderIds" parameterType="java.lang.String">
+    UPDATE shop_order SET order_state = 0 WHERE id IN
+    <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND buyer_id = #{userId,jdbcType=INTEGER} AND order_state = 10
+  </update>
+
+  <update id="delOrderByOrderId" parameterType="java.lang.Integer">
+    UPDATE shop_order SET delete_state = 2 WHERE id = #{orderId,jdbcType=INTEGER}
+    AND buyer_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateShopOrderPaymentCodeByPaySn" parameterType="java.lang.Integer">
+    UPDATE shop_order SET payment_code = #{paymentCode,jdbcType=VARCHAR} WHERE pay_sn = #{paySn,jdbcType=BIGINT}
+  </update>
+
+  <update id="confirmReceiptByOrderId" parameterType="java.lang.Integer">
+    UPDATE shop_order SET order_state = 40,finnshed_time = #{finnshedTime,jdbcType=BIGINT} WHERE id = #{orderId,jdbcType=INTEGER}
+    AND buyer_id = #{userId,jdbcType=INTEGER} AND order_state = 30
+  </update>
+
+  <select id="findListByPaySn" resultMap="BaseResultMap"  >
+    select
+    <include refid="Base_Column_List" />
+    from shop_order
+    where pay_sn = #{paySn,jdbcType=BIGINT}
+  </select>
+
+  <select id="findOrderAmountByPaySn" resultType="Double" >
+    select SUM(order_amount) as amount
+    from shop_order
+    where pay_sn = #{paySn,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectShopOrderByPaySn" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from shop_order
+    where pay_sn = #{paySn,jdbcType=BIGINT} AND delete_state = 0
+  </select>
+
+
+</mapper>

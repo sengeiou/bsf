@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.live.LiveAdvanceNoticeMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.live.LiveAdvanceNotice" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="live_time" property="liveTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, live_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_live_advance_notice
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_live_advance_notice
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.live.LiveAdvanceNotice" >
+    insert into wk_live_advance_notice (id, user_id, live_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{liveTime,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.live.LiveAdvanceNotice" >
+    insert into wk_live_advance_notice
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="liveTime != null" >
+        live_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="liveTime != null" >
+        #{liveTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.live.LiveAdvanceNotice" >
+    update wk_live_advance_notice
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="liveTime != null" >
+        live_time = #{liveTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.live.LiveAdvanceNotice" >
+    update wk_live_advance_notice
+    set user_id = #{userId,jdbcType=INTEGER},
+      live_time = #{liveTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="findAnchorNoticeByUserId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from wk_live_advance_notice
+    where user_id = #{userId,jdbcType=INTEGER} and live_time> #{live_time,jdbcType=BIGINT} order by  live_time asc
+    </select>
+
+  <update id="updateById" parameterType="com.weking.model.live.LiveAdvanceNotice" >
+    update wk_live_advance_notice
+    set
+      live_time = #{live_time,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="findAnchorNoticeListByTime" resultMap="BaseResultMap">
+    SELECT a.*,b.account,b.nickname,b.pichead_url
+    FROM wk_live_advance_notice a
+    Inner JOIN wk_user_info b on a.user_id = b.id
+    WHERE  a.live_time >=#{start_time,jdbcType=BIGINT}
+    and  a.live_time  &lt; #{end_time,jdbcType=BIGINT}
+
+    order by   a.live_time  asc
+
+  </select>
+
+
+  <select id="selectByUserIdAndTime" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_live_advance_notice
+    where user_id = #{userId,jdbcType=INTEGER} and  live_time =#{live_time,jdbcType=BIGINT} LIMIT 1
+  </select>
+
+</mapper>

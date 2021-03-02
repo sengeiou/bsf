@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.goods.GoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.goods.Goods" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_commonid" property="goodsCommonid" jdbcType="INTEGER" />
+    <result column="goods_parentid" property="goodsParentid" jdbcType="INTEGER" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_jingle" property="goodsJingle" jdbcType="VARCHAR" />
+    <result column="store_id" property="storeId" jdbcType="INTEGER" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+    <result column="gc_id" property="gcId" jdbcType="INTEGER" />
+    <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+    <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+    <result column="goods_promotion_price" property="goodsPromotionPrice" jdbcType="DECIMAL" />
+    <result column="goods_promotion_type" property="goodsPromotionType" jdbcType="TINYINT" />
+    <result column="goods_marketprice" property="goodsMarketprice" jdbcType="DECIMAL" />
+    <result column="goods_storage_alarm" property="goodsStorageAlarm" jdbcType="TINYINT" />
+    <result column="goods_click" property="goodsClick" jdbcType="INTEGER" />
+    <result column="goods_salenum" property="goodsSalenum" jdbcType="INTEGER" />
+    <result column="goods_collect" property="goodsCollect" jdbcType="INTEGER" />
+    <result column="goods_storage" property="goodsStorage" jdbcType="INTEGER" />
+    <result column="goods_image" property="goodsImage" jdbcType="VARCHAR" />
+    <result column="goods_state" property="goodsState" jdbcType="TINYINT" />
+    <result column="goods_verify" property="goodsVerify" jdbcType="TINYINT" />
+    <result column="goods_addtime" property="goodsAddtime" jdbcType="INTEGER" />
+    <result column="goods_edittime" property="goodsEdittime" jdbcType="INTEGER" />
+    <result column="color_id" property="colorId" jdbcType="INTEGER" />
+    <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="goods_freight" property="goodsFreight" jdbcType="DECIMAL" />
+    <result column="goods_vat" property="goodsVat" jdbcType="TINYINT" />
+    <result column="goods_commend" property="goodsCommend" jdbcType="TINYINT" />
+    <result column="evaluation_good_star" property="evaluationGoodStar" jdbcType="TINYINT" />
+    <result column="evaluation_count" property="evaluationCount" jdbcType="INTEGER" />
+    <result column="goods_spec" property="goodsSpec" jdbcType="LONGVARCHAR" />
+    <result column="coin_price" property="coin_price" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_commonid, goods_name, goods_jingle, store_id, gc_id, brand_id, goods_price,
+    goods_promotion_price, goods_promotion_type, goods_marketprice, goods_storage_alarm, 
+    goods_click, goods_salenum, goods_collect, goods_storage, goods_image, goods_state,
+    goods_verify, goods_addtime, goods_edittime, color_id, sale_id, goods_freight,
+    goods_vat, goods_commend, evaluation_good_star, evaluation_count,goods_spec,coin_price
+  </sql>
+  <sql id="Blob_Column_List" >
+    goods_spec
+  </sql>
+
+  <delete id="delGoodsByGoodsCommonId" >
+    DELETE FROM shop_goods
+    WHERE goods_commonid = #{goodsCommonid}
+  </delete>
+
+  <select id="selectGoodsListByGoodsCommonIds" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id,goods_commonid,goods_spec,color_id,goods_image
+    from shop_goods
+    where store_id = #{storeId,jdbcType=INTEGER} AND goods_commonid IN
+    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND goods_verify = 1 AND goods_state = 1 ORDER BY goods_commonid DESC
+  </select>
+
+  <select id="selectListByGoodsCommonId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id,goods_commonid,goods_spec,color_id,goods_image,store_id,store_name,goods_salenum
+    from shop_goods
+    where goods_commonid = #{goodsCommonId}
+  </select>
+
+  <select id="findGoodsInfoByGoodsId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select id,goods_image,store_id,store_name,goods_storage,goods_commonid,goods_parentid,
+    goods_name,goods_price,goods_spec,goods_promotion_price,goods_promotion_type,coin_price
+    from shop_goods
+    where id = #{goodsId,jdbcType=INTEGER} AND goods_verify = 1
+    AND goods_state = 1
+  </select>
+
+  <select id="selectGoodsListByGoodsIds" resultMap="BaseResultMap"  >
+    select id,goods_image,store_id,store_name,goods_name,goods_price,sale_id,goods_parentid
+    ,goods_marketprice,goods_spec,goods_storage,goods_freight,goods_promotion_price,goods_promotion_type,
+    coin_price
+    from shop_goods
+    where id IN
+    <foreach item="item" index="index" collection="map"
+             open="(" separator="," close=")">
+      #{index}
+    </foreach>
+    AND goods_verify = 1 ORDER BY store_id DESC
+  </select>
+
+  <select id="selectParentGoodsList" resultMap="BaseResultMap"  >
+    select id,goods_storage,goods_freight from shop_goods
+    where id IN
+    <foreach item="item" index="index" collection="list"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="selectGoodsListByGoodsIdsList" resultMap="BaseResultMap"  >
+    select id,goods_image,store_id,store_name,goods_name,goods_price
+    ,goods_marketprice,goods_spec,goods_storage,goods_freight,goods_promotion_price,goods_promotion_type,coin_price
+    from shop_goods
+    where id IN
+    <foreach item="item" index="index" collection="list"
+             open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND goods_verify = 1 ORDER BY store_id DESC
+  </select>
+
+  <update id="updateGoodsNumBatch" >
+    UPDATE shop_goods
+    <trim prefix="SET" suffixOverrides=",">
+      <trim prefix="goods_storage = case" suffix="end,">
+        <foreach collection="map" item="value" index="key">
+          <if test="value != null">
+            when id = #{key} then goods_storage - #{value}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach collection="map" index="key"  item="value" separator="," open="(" close=")">
+      #{key}
+    </foreach>
+  </update>
+
+
+  <update id="updateIncGoodsStorageBatch" >
+    UPDATE shop_goods
+    <trim prefix="SET" suffixOverrides=",">
+      <trim prefix="goods_storage = case" suffix="end,">
+        <foreach collection="map" item="value" index="key">
+          <if test="value != null">
+            when id = #{key} then goods_storage + #{value}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach collection="map" index="key"  item="value" separator="," open="(" close=")">
+      #{key}
+    </foreach>
+  </update>
+
+
+  <update id="updateGoodsSaleNumBatch" >
+    UPDATE shop_goods
+    <trim prefix="SET" suffixOverrides=",">
+      <trim prefix="goods_salenum = case" suffix="end,">
+        <foreach collection="map" item="value" index="key">
+          <if test="value != null">
+            when id = #{key} then goods_salenum + #{value}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where id in
+    <foreach collection="map" index="key"  item="value" separator="," open="(" close=")">
+      #{key}
+    </foreach>
+  </update>
+
+  <insert id="insertCopy" >
+    insert into shop_goods (goods_parentid,goods_commonid, goods_name,
+      goods_jingle, store_id,store_name, gc_id,sale_id,
+      brand_id, goods_price, goods_promotion_price, 
+      goods_promotion_type, goods_marketprice, goods_storage_alarm,
+      goods_storage, goods_image, goods_state,goods_freight,goods_vat,
+      goods_verify, goods_addtime, goods_edittime, 
+      color_id, goods_spec,coin_price)
+    SELECT id,#{commonId}, goods_name,
+      goods_jingle, #{storeId},#{storeName}, gc_id,sale_id,
+      brand_id, goods_price, goods_promotion_price,
+      goods_promotion_type, goods_marketprice, goods_storage_alarm,
+      goods_storage, goods_image, goods_state,goods_freight,goods_vat,
+      goods_verify, #{goodsAddtime}, #{goodsAddtime},
+      color_id, goods_spec,coin_price FROM shop_goods WHERE goods_commonid = #{goodsCommonId}
+  </insert>
+</mapper>

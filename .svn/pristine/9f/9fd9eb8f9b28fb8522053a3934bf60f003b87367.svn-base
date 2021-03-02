@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.log.FrozenLogMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.log.FrozenLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="diamond" property="diamond" jdbcType="INTEGER" />
+    <result column="frozen_type" property="frozenType" jdbcType="TINYINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, diamond, frozen_type, state, add_time
+  </sql>
+  <select id="findDiamondById" resultType="int" parameterType="java.lang.Integer" >
+    select diamond
+    from wk_frozen_log
+    where id = #{id,jdbcType=INTEGER} AND state = 2
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.log.FrozenLog" useGeneratedKeys="true" keyProperty="id">
+    insert into wk_frozen_log (id,user_id, diamond,
+      frozen_type, state, add_time
+      )
+    values (#{id,jdbcType=INTEGER},#{userId,jdbcType=INTEGER}, #{diamond,jdbcType=INTEGER},
+      #{frozenType,jdbcType=TINYINT}, #{state,jdbcType=TINYINT}, #{addTime,jdbcType=BIGINT}
+      )
+  </insert>
+
+  <update id="updateFrozenState" parameterType="com.weking.model.log.FrozenLog" >
+    update wk_frozen_log SET state = #{state,jdbcType=TINYINT}
+    where id = #{id}
+  </update>
+
+</mapper>

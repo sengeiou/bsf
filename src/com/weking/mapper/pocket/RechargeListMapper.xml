@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.pocket.RechargeListMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.pocket.RechargeList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="recharge_type" property="rechargeType" jdbcType="SMALLINT" />
+    <result column="pay_money" property="payMoney" jdbcType="DOUBLE" />
+    <result column="buy_num" property="buyNum" jdbcType="INTEGER" />
+    <result column="give_num" property="giveNum" jdbcType="INTEGER" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="third_party_id" property="thirdPartyId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, recharge_type, pay_money, buy_num, give_num, currency, third_party_id
+  </sql>
+  <select id="selectByRechargeType" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_recharge_list
+    where recharge_type = #{type,jdbcType=INTEGER} AND project_name = #{project_name}
+    <if test="role != 2" >
+      AND enable = 1
+    </if>
+    <if test="version != 0">
+      AND hide_version != #{version}
+    </if>
+  </select>
+
+  <select id="findByRechargeId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_recharge_list
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="findByThirdId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_recharge_list
+    where third_party_id = #{thirdId,jdbcType=VARCHAR} AND recharge_type = #{rechargeType}
+  </select>
+
+  <select id="findByRechargeType" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_recharge_list
+    where recharge_type = #{rechargeType,jdbcType=INTEGER} and  enable=1 order by pay_money
+  </select>
+
+  <select id="selectByTypeAndMoney" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List"/>
+    from wk_recharge_list
+    where pay_money = #{pay_money,jdbcType=DOUBLE} and  recharge_type=#{recharge_type,jdbcType=SMALLINT}
+  </select>
+
+</mapper>

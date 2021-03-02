@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.digital.DigitalWalletLogMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.digital.DigitalWalletLog">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="in_address" property="inAddress" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="timestamp" property="timestamp" jdbcType="BIGINT"/>
+        <result column="txid" property="txid" jdbcType="VARCHAR"/>
+        <result column="confirmations" property="confirmations" jdbcType="INTEGER"/>
+        <result column="original_id" property="originalId" jdbcType="BIGINT"/>
+        <result column="out_address" property="outAddress" jdbcType="VARCHAR"/>
+        <result column="fee" property="fee" jdbcType="DECIMAL"/>
+        <result column="opt_type" property="optType" jdbcType="SMALLINT"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="SMALLINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, symbol, in_address, amount, create_time, timestamp, txid, confirmations, 
+    original_id, out_address, fee, opt_type, remark,status
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_digital_wallet_log
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from wk_digital_wallet_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.weking.model.digital.DigitalWalletLog">
+    insert into wk_digital_wallet_log (id, user_id, symbol, 
+      in_address, amount, create_time, 
+      timestamp, txid, confirmations, 
+      original_id, out_address, fee, 
+      opt_type, remark,status)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR}, 
+      #{inAddress,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{createTime,jdbcType=BIGINT}, 
+      #{timestamp,jdbcType=BIGINT}, #{txid,jdbcType=VARCHAR}, #{confirmations,jdbcType=INTEGER}, 
+      #{originalId,jdbcType=BIGINT}, #{outAddress,jdbcType=VARCHAR}, #{fee,jdbcType=DECIMAL}, 
+      #{optType,jdbcType=SMALLINT}, #{remark,jdbcType=VARCHAR},#{status,jdbcType=SMALLINT})
+  </insert>
+    <insert id="insertSelective" parameterType="com.weking.model.digital.DigitalWalletLog" useGeneratedKeys="true" keyProperty="id">
+        insert into wk_digital_wallet_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="symbol != null">
+                symbol,
+            </if>
+            <if test="inAddress != null">
+                in_address,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="timestamp != null">
+                timestamp,
+            </if>
+            <if test="txid != null">
+                txid,
+            </if>
+            <if test="confirmations != null">
+                confirmations,
+            </if>
+            <if test="originalId != null">
+                original_id,
+            </if>
+            <if test="outAddress != null">
+                out_address,
+            </if>
+            <if test="fee != null">
+                fee,
+            </if>
+            <if test="optType != null">
+                opt_type,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="optType != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="symbol != null">
+                #{symbol,jdbcType=VARCHAR},
+            </if>
+            <if test="inAddress != null">
+                #{inAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="timestamp != null">
+                #{timestamp,jdbcType=BIGINT},
+            </if>
+            <if test="txid != null">
+                #{txid,jdbcType=VARCHAR},
+            </if>
+            <if test="confirmations != null">
+                #{confirmations,jdbcType=INTEGER},
+            </if>
+            <if test="originalId != null">
+                #{originalId,jdbcType=BIGINT},
+            </if>
+            <if test="outAddress != null">
+                #{outAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="fee != null">
+                #{fee,jdbcType=DECIMAL},
+            </if>
+            <if test="optType != null">
+                #{optType,jdbcType=SMALLINT},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=SMALLINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.digital.DigitalWalletLog">
+        update wk_digital_wallet_log
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="symbol != null">
+                symbol = #{symbol,jdbcType=VARCHAR},
+            </if>
+            <if test="inAddress != null">
+                in_address = #{inAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=BIGINT},
+            </if>
+            <if test="timestamp != null">
+                timestamp = #{timestamp,jdbcType=BIGINT},
+            </if>
+            <if test="txid != null">
+                txid = #{txid,jdbcType=VARCHAR},
+            </if>
+            <if test="confirmations != null">
+                confirmations = #{confirmations,jdbcType=INTEGER},
+            </if>
+            <if test="originalId != null">
+                original_id = #{originalId,jdbcType=BIGINT},
+            </if>
+            <if test="outAddress != null">
+                out_address = #{outAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="fee != null">
+                fee = #{fee,jdbcType=DECIMAL},
+            </if>
+            <if test="optType != null">
+                opt_type = #{optType,jdbcType=SMALLINT},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=SMALLINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.weking.model.digital.DigitalWalletLog">
+    update wk_digital_wallet_log
+    set user_id = #{userId,jdbcType=BIGINT},
+      symbol = #{symbol,jdbcType=VARCHAR},
+      in_address = #{inAddress,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=BIGINT},
+      timestamp = #{timestamp,jdbcType=BIGINT},
+      txid = #{txid,jdbcType=VARCHAR},
+      confirmations = #{confirmations,jdbcType=INTEGER},
+      original_id = #{originalId,jdbcType=BIGINT},
+      out_address = #{outAddress,jdbcType=VARCHAR},
+      fee = #{fee,jdbcType=DECIMAL},
+      opt_type = #{optType,jdbcType=SMALLINT},
+      status = #{status,jdbcType=SMALLINT},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="selectByUserIdSymbol" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_digital_wallet_log
+        where user_id = #{user_id} and symbol=#{symbol}
+        ORDER BY id DESC
+    </select>
+
+    <select id="selectListByUserIdSymbol" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from wk_digital_wallet_log
+        where user_id = #{user_id} and symbol=#{symbol}
+        ORDER BY id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+    <select id="selectListByUserIdSymbolAndType" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from wk_digital_wallet_log
+        where user_id = #{user_id} and symbol=#{symbol} AND  opt_type IN
+
+        <foreach collection="optTypeList" item="optType" index="index"
+                 open="(" close=")" separator=",">	  #{optType}
+        </foreach>
+
+        ORDER BY id DESC
+        LIMIT #{offset},#{limit}
+    </select>
+
+
+</mapper>

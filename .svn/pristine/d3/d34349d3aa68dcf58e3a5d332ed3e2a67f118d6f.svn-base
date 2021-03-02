@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.goods.GoodsClassMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.goods.GoodsClass" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gc_name" property="gcName" jdbcType="VARCHAR" />
+    <result column="gc_thumb" property="gcThumb" jdbcType="VARCHAR" />
+    <result column="type_id" property="typeId" jdbcType="INTEGER" />
+    <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+    <result column="gc_parent_id" property="gcParentId" jdbcType="INTEGER" />
+    <result column="gc_sort" property="gcSort" jdbcType="BIT" />
+    <result column="gc_title" property="gcTitle" jdbcType="VARCHAR" />
+    <result column="gc_keywords" property="gcKeywords" jdbcType="VARCHAR" />
+    <result column="gc_description" property="gcDescription" jdbcType="VARCHAR" />
+    <result column="gc_show" property="gcShow" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, gc_name, gc_thumb, type_id, type_name, gc_parent_id, gc_sort, gc_title, gc_keywords, 
+    gc_description, gc_show
+  </sql>
+
+  <select id="selectChildListByGcParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  select id,gc_name,gc_thumb
+  from shop_goods_class
+  where gc_parent_id = #{GcParentId,jdbcType=INTEGER} AND gc_show = 1 ORDER BY gc_sort DESC
+</select>
+
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.shop.goods.GoodsClass" >
+    update shop_goods_class
+    set gc_name = #{gcName,jdbcType=VARCHAR},
+      gc_thumb = #{gcThumb,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      type_name = #{typeName,jdbcType=VARCHAR},
+      gc_parent_id = #{gcParentId,jdbcType=INTEGER},
+      gc_sort = #{gcSort,jdbcType=BIT},
+      gc_title = #{gcTitle,jdbcType=VARCHAR},
+      gc_keywords = #{gcKeywords,jdbcType=VARCHAR},
+      gc_description = #{gcDescription,jdbcType=VARCHAR},
+      gc_show = #{gcShow,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

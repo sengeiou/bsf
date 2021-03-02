@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.level.LevelEffectMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.level.LevelEffect" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="min_level" property="minLevel" jdbcType="INTEGER" />
+    <result column="max_level" property="maxLevel" jdbcType="INTEGER" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="enable" property="enable" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, min_level, max_level, url, enable
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_level_effect
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_level_effect
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.level.LevelEffect" >
+    insert into wk_level_effect (id, min_level, max_level, 
+      url, enable)
+    values (#{id,jdbcType=INTEGER}, #{minLevel,jdbcType=INTEGER}, #{maxLevel,jdbcType=INTEGER}, 
+      #{url,jdbcType=VARCHAR}, #{enable,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.level.LevelEffect" >
+    insert into wk_level_effect
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="minLevel != null" >
+        min_level,
+      </if>
+      <if test="maxLevel != null" >
+        max_level,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="minLevel != null" >
+        #{minLevel,jdbcType=INTEGER},
+      </if>
+      <if test="maxLevel != null" >
+        #{maxLevel,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.level.LevelEffect" >
+    update wk_level_effect
+    <set >
+      <if test="minLevel != null" >
+        min_level = #{minLevel,jdbcType=INTEGER},
+      </if>
+      <if test="maxLevel != null" >
+        max_level = #{maxLevel,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.level.LevelEffect" >
+    update wk_level_effect
+    set min_level = #{minLevel,jdbcType=INTEGER},
+      max_level = #{maxLevel,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      enable = #{enable,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+  <select id="selectByLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_level_effect
+    where  enable =1 and min_level &lt;= #{level} and max_level >= #{level} limit 1
+  </select>
+
+</mapper>

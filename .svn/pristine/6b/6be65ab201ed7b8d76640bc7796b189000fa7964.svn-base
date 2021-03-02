@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.game.GameBetMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.game.GameBet" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="game_time" property="gameTime" jdbcType="BIGINT" />
+    <result column="game_id" property="liveId" jdbcType="BIGINT" />
+    <result column="bet_coin" property="betCoin" jdbcType="INTEGER" />
+    <result column="income_coin" property="incomeCoin" jdbcType="INTEGER" />
+    <result column="anchor_id" property="anchorId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, game_time, game_id, bet_coin, income_coin,anchor_id
+  </sql>
+  <insert id="insert" parameterType="com.weking.model.game.GameBet" >
+    insert into wk_game_bet (id, user_id, game_time, 
+      game_id, bet_coin, income_coin,anchor_id, game_type
+      )
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{gameTime,jdbcType=BIGINT}, 
+      #{gameId,jdbcType=BIGINT},
+      #{betCoin,jdbcType=INTEGER}, #{incomeCoin,jdbcType=INTEGER},#{anchorId,jdbcType=INTEGER}
+      ,#{gameType,jdbcType=TINYINT}
+      )
+  </insert>
+  <select id="getDailyWinTime" resultType="int" >
+    select count(1) from wk_game_bet where user_id = #{userId}
+    and income_coin > 0 and game_time >=  #{today}
+  </select>
+
+  <select id="getGameOrder" resultType="Map" >
+    SELECT SUM(a.income_coin) as diff,b.account,b.pichead_url as avatar,b.nickname
+    from wk_game_bet a INNER JOIN wk_user_info b on a.user_id=b.id WHERE 1
+    <if test="month != null">
+      AND Left(a.game_time,6) = #{month}
+    </if>
+    AND income_coin > 0
+    GROUP BY a.user_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <select id="getDailyGameOrder" resultType="Map" >
+    SELECT SUM(a.income_coin) as diff,b.account,b.pichead_url as avatar,b.nickname
+    from wk_game_bet a INNER JOIN wk_user_info b on a.user_id=b.id WHERE Left(a.game_time,8) = #{day} AND income_coin > 0
+    GROUP BY a.user_id
+    ORDER BY diff DESC LIMIT #{offset},#{limit}
+  </select>
+
+  <insert id="insertBatch" parameterType="list">
+    insert into wk_game_bet(user_id,game_time,game_id,bet_coin,income_coin,anchor_id, game_type)values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.userId},#{item.gameTime},#{item.gameId},#{item.betCoin},#{item.incomeCoin},#{item.anchorId},
+      #{item.gameType})
+    </foreach>
+  </insert>
+
+</mapper>

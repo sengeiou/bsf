@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.pocket.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.pocket.Order" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+    <result column="trade_no" property="tradeNo" jdbcType="VARCHAR" />
+    <result column="payment_code" property="paymentCode" jdbcType="TINYINT" />
+    <result column="recharge_id" property="rechargeId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DOUBLE" />
+    <result column="buy_num" property="buyNum" jdbcType="INTEGER" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+    <result column="ratio" property="ratio" jdbcType="DECIMAL"/>
+    <result column="user_name" property="user_name" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, order_sn, trade_no, payment_code, recharge_id, amount, buy_num, currency,
+    state, add_time,ratio,user_name,email
+  </sql>
+
+  <select id="selectByOrderSn" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_order
+    where order_sn = #{orderSn,jdbcType=VARCHAR} AND user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByOrderSnOne" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_order
+    where order_sn = #{orderSn,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectPayListByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_order
+    where user_id = #{userId,jdbcType=INTEGER} AND state = 3 ORDER  BY id DESC limit #{index},#{count}
+  </select>
+
+  <select id="selectRechargeListByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_order
+    where user_id = #{userId,jdbcType=INTEGER} ORDER  BY id DESC limit #{index},#{count}
+  </select>
+
+  <select id="findByRechargeId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select <include refid="Base_Column_List" />
+    from wk_order
+    where user_id = #{userId,jdbcType=INTEGER} AND recharge_id = #{rechargeId,jdbcType=INTEGER}
+    AND state = 1 ORDER BY id DESC limit 1
+  </select>
+
+  <insert id="insert" parameterType="com.weking.model.pocket.Order" >
+    insert into wk_order (id, user_id, order_sn, 
+      payment_code, recharge_id,
+      amount, buy_num, currency,
+      add_time,user_name,email)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{orderSn,jdbcType=VARCHAR}, 
+      #{paymentCode,jdbcType=TINYINT}, #{rechargeId,jdbcType=INTEGER},
+      #{amount,jdbcType=DOUBLE}, #{buyNum,jdbcType=INTEGER}, #{currency,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=BIGINT}, #{user_name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByOrderId" parameterType="com.weking.model.pocket.Order" >
+    update wk_order
+    <set >
+        <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyNum != null" >
+        buy_num = #{buyNum,jdbcType=INTEGER},
+      </if>
+        state = 3,
+    </set>
+    where id = #{Id,jdbcType=BIGINT} AND state = 1 and  trade_no=''
+  </update>
+
+  <update id="updateByOrderIdAndApplePay" parameterType="com.weking.model.pocket.Order" >
+    update wk_order
+    <set >
+      <if test="tradeNo != null" >
+        trade_no = #{tradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="buyNum != null" >
+        buy_num = #{buyNum,jdbcType=INTEGER},
+      </if>
+      state = 3,
+    </set>
+    where id = #{Id,jdbcType=BIGINT} AND state = 1
+  </update>
+
+  <update id="updateOrderSettle" parameterType="java.lang.String" >
+    update wk_order SET is_settle = 1 where order_sn = #{orderSn,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateOrderRatio" parameterType="java.lang.String" >
+    update wk_order SET ratio = #{ratio,jdbcType=DECIMAL}  where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectCountByTradeNo" resultType="int" parameterType="java.lang.String" >
+    select COUNT(*)
+    from wk_order
+    where trade_no = #{tradeNo,jdbcType=VARCHAR}
+  </select>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List"/>
+    from wk_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+
+  <select id="selectPayListByUserIdOrOther" resultType="Map" parameterType="java.lang.Integer">
+    select
+    b.account,b.nickname,a.order_sn,a.trade_no,a.payment_code,a.amount,a.buy_num,a.currency,a.state,a.ratio,a.add_time
+    from wk_order a INNER JOIN wk_user_info b on a.user_id=b.id
+    where user_id = #{userId,jdbcType=INTEGER} AND add_time &gt;= #{beginTime}
+    and add_time &lt;= #{endTime}
+    <if test="paymentCode!=-1">
+      and payment_code=#{paymentCode}
+    </if>
+
+    <if test="state!=-1">
+      and state=#{state}
+    </if>
+
+     ORDER  BY a.id DESC limit #{index},#{count}
+  </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.shop.adv.ShopAdvMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.shop.adv.ShopAdv" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="adv_title" property="advTitle" jdbcType="VARCHAR" />
+    <result column="adv_sort" property="advSort" jdbcType="TINYINT" />
+    <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+    <result column="extend" property="extend" jdbcType="VARCHAR" />
+    <result column="is_show" property="isShow" jdbcType="BIT" />
+    <result column="width" property="width" jdbcType="DOUBLE" />
+    <result column="height" property="height" jdbcType="DOUBLE" />
+    <result column="adv_type" property="advType" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, adv_title, adv_sort, img_url, extend, is_show, width, height, adv_type
+  </sql>
+  <select id="selectAdvList" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from shop_adv WHERE is_show = 1 ORDER BY adv_sort DESC
+  </select>
+</mapper>

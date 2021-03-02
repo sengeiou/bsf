@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.digital.DigitalCurrencyMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.digital.DigitalCurrency" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="rate" property="rate" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, currency, rate
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_digital_currency
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wk_digital_currency
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.weking.model.digital.DigitalCurrency" >
+    insert into wk_digital_currency (id, currency, rate
+      )
+    values (#{id,jdbcType=INTEGER}, #{currency,jdbcType=VARCHAR}, #{rate,jdbcType=DOUBLE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.weking.model.digital.DigitalCurrency" >
+    insert into wk_digital_currency
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="currency != null" >
+        currency,
+      </if>
+      <if test="rate != null" >
+        rate,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="currency != null" >
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null" >
+        #{rate,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.digital.DigitalCurrency" >
+    update wk_digital_currency
+    <set >
+      <if test="currency != null" >
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="rate != null" >
+        rate = #{rate,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.weking.model.digital.DigitalCurrency" >
+    update wk_digital_currency
+    set currency = #{currency,jdbcType=VARCHAR},
+      rate = #{rate,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByCurrency" resultType="java.lang.Double" parameterType="java.lang.String" >
+    select rate
+    from wk_digital_currency
+    where currency = #{currency,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectCurrency" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_digital_currency
+  </select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.pocket.AppleReceiptMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.pocket.AppleReceipt" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+    <result column="receipt" property="receipt" jdbcType="VARCHAR" />
+    <result column="add_time" property="addTime" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_sn, receipt, add_time
+  </sql>
+  <select id="selectCountByReceipt" resultType="java.lang.Integer" parameterType="java.lang.Integer" >
+    select count(1)
+    from wk_apple_receipt
+    where receipt = #{receipt,jdbcType=VARCHAR}
+  </select>
+  <insert id="insert" parameterType="com.weking.model.pocket.AppleReceipt" >
+    insert into wk_apple_receipt (id, order_sn, receipt, 
+      add_time)
+    values (#{id,jdbcType=INTEGER}, #{orderSn,jdbcType=VARCHAR}, #{receipt,jdbcType=VARCHAR}, 
+      #{addTime,jdbcType=BIGINT})
+  </insert>
+</mapper>

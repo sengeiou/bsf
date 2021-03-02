@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.level.LevelMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.level.Level" >
+    <id column="id" property="id" jdbcType="SMALLINT" />
+    <result column="level" property="level" jdbcType="SMALLINT" />
+    <result column="experience" property="experience" jdbcType="INTEGER" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, level, experience,color
+  </sql>
+  <select id="selectByAllLevel" resultMap="BaseResultMap" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_level ORDER BY `level` ASC
+  </select>
+</mapper>

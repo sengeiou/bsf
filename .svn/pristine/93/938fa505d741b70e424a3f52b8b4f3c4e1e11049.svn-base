@@ -1,0 +1,495 @@
+package com.weking.controller.web;
+
+import com.weking.cache.WKCache;
+import com.weking.core.C;
+import com.weking.core.ResultCode;
+import com.weking.core.WkUtil;
+import com.weking.core.enums.UploadTypeEnum;
+import com.weking.mapper.account.AccountInfoMapper;
+import com.weking.mapper.log.EventLogMapper;
+import com.weking.mapper.pocket.RechargeListMapper;
+import com.weking.model.account.AccountInfo;
+import com.weking.model.log.EventLog;
+import com.weking.model.pocket.RechargeList;
+import com.weking.service.live.LiveService;
+import com.weking.service.pay.PocketService;
+import com.weking.service.user.RankService;
+import com.weking.service.user.SmsService;
+import com.weking.service.user.UserService;
+import com.weking.service.web.WebService;
+import com.wekingframework.comm.LibControllerBase;
+import com.wekingframework.core.LibDateUtils;
+import com.wekingframework.core.LibProperties;
+import com.wekingframework.core.LibSysUtils;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * TODO 2017/3/12.
+ */
+@Controller
+@RequestMapping({"/web","/live/web"})
+public class WebController extends LibControllerBase {
+    @Resource
+    private LiveService liveService;
+    @Resource
+    private WebService webService;
+    @Resource
+    private SmsService smsService;
+    @Resource
+    private RankService rankService;
+    @Resource
+    private UserService userService;
+    @Resource
+    private PocketService pocketService;
+    @Resource
+    private EventLogMapper eventLogMapper;
+    @Resource
+    private AccountInfoMapper accountInfoMapper;
+    @Resource
+    private RechargeListMapper rechargeListMapper;
+
+    private static Logger logger = Logger.getLogger(WebController.class);
+
+    //直播列表
+    @RequestMapping("/getLiveList")
+    public void getLiveList(HttpServletRequest request, HttpServletResponse response) {
+        //String access_token = getParameter(request, "access_token");
+        int type = getParameter(request, "type", 0);
+        String project_name = getParameter(request, "project_name", "");
+        String type_value = getParameter(request, "type_value", "");
+        int index = getParameter(request, "index", 0);
+        int count = getParameter(request, "count", 10);
+        String lang_code = getParameter(request, "lang_code", "zh_CN");
+        String callback = getParameter(request, "callback");
+        JSONObject object = liveService.getLiveList(0, type, type_value, project_name, index, count,
+                lang_code, true, false,1.0,"");
+        String result = callback + "(" + object.toString() + ")";
+        out(response, result);
+    }
+
+    //主播回放记录
+    @RequestMapping("/getMyLiveList")
+    public void getMyLiveList(HttpServletRequest request, HttpServletResponse response) {
+        String account = getParameter(request, "account");
+        int index = getParameter(request, "index", 0);
+        int count = getParameter(request, "count", 10);
+        String project_name = getParameter(request, "project_name", "");
+        String lang_code = getParameter(request, "lang_code", "zh_CN");
+        String callback = getParameter(request, "callback");
+        JSONObject object = liveService.getLivePlaybackList(0, account, project_name, index, count, lang_code, true,"");
+        String result = callback + "(" + object.toString() + ")";
+        out(response, result);
+    }
+
+    //进入房间
+    @RequestMapping("/enter")
+    public void enter(HttpServletRequest request, HttpServletResponse response) {
+        String access_token = getParameter(request, "access_token");
+        int user_id = 0;
+        if (!LibSysUtils.isNullOrEmpty(access_token)) {
+            user_id = WKCache.check_token(access_token).optInt("user_id");
+        }
+        int live_id = getParameter(request, "live_id", 0);
+        String callback = getParameter(request, "callback");
+        JSONObject object = liveService.webEnter(user_id, "", live_id);
+        String result = callback + "(" + object.toString() + ")";
+        out(response, result);
+    }
+
+    //登录
+    @RequestMapping("/login")
+    public void login(HttpServletRequest request, HttpServletResponse response) {
+        String client_ip = WkUtil.getIpAddr(request);
+        int type = LibSysUtils.toInt(request.getParameter("type"));
+        String user_name = getParameter(request, "user_name");
+        String pwd = getParameter(request, "pwd");
+        String lang_code = getParameter(request, "lang_code");
+        String area_code = getParameter(request, "area_code");
+        String callback = getParameter(request, "callback");
+        String device_model = getParameter(request, "device_model");
+        String version = getParameter(request, "version");
+        JSONObject object = webService.login(type, user_name, pwd, client_ip, area_code, device_model, version, lang_code);
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+
+    /**
+     * 发送验证码
+     */
+    @RequestMapping("/sendCaptcha")
+    public void sendCaptcha(HttpServletRequest request, HttpServletResponse response) {
+        JSONObject object;
+        String phone = request.getParameter("phone");
+        String area_code = getParameter(request, "area_code", "86");
+        int type = getParameter(request, "type", 1);
+        String lang_code = request.getParameter("lang_code");
+        String callback = getParameter(request, "callback");
+        String project_name = getParameter(request, "project_name", "");
+        object = smsService.sendCaptcha(phone, area_code, type, project_name, lang_code);
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+
+    //获取区间收入排行
+    @RequestMapping("/incomeDayRank")
+    public void incomeDayRank(HttpServletRequest request, HttpServletResponse response) {
+        String access_token = getParameter(request, "access_token");
+        int user_id = 0;
+        if (!LibSysUtils.isNullOrEmpty(access_token)) {
+            user_id = WKCache.check_token(access_token).optInt("user_id");
+        }
+        long beginTime = getParameter(request, "beginTime", 0L);
+        long endTime = getParameter(request, "endTime", 0L);
+        int ranking_type = getParameter(request, "ranking_type", 1);
+        int index = getParameter(request, "index", 0);
+        int count = getParameter(request, "count", 50);
+        String giftStr = getParameter(request, "giftStr", "0");
+        Integer level_type = getParameter(request, "level_type", 0);
+
+        String callback = getParameter(request, "callback");
+        JSONObject object = rankService.getDayRank(ranking_type, beginTime, endTime, index, count,giftStr,level_type);
+        String result = callback + "(" + object.toString() + ")";
+        out(response, result);
+    }
+
+
+
+
+    //获取区间仙女礼物排行个数
+    @RequestMapping("/getGiftNumRank")
+    public void getGiftNumRank(HttpServletRequest request, HttpServletResponse response) {
+        String access_token = getParameter(request, "access_token");
+        int user_id = 0;
+        if (!LibSysUtils.isNullOrEmpty(access_token)) {
+            user_id = WKCache.check_token(access_token).optInt("user_id");
+        }
+        long beginTime = getParameter(request, "beginTime", 0L);
+        long endTime = getParameter(request, "endTime", 0L);
+        int giftId = getParameter(request, "gift_id", 0);
+        int type = getParameter(request, "type", 0);
+        int index = getParameter(request, "index", 0);
+        int count = getParameter(request, "count", 50);
+        String callback = getParameter(request, "callback");
+        JSONObject object = rankService.getGiftNumRank(giftId, beginTime, endTime, index, count,type);
+        String result = callback + "(" + object.toString() + ")";
+        out(response, result);
+    }
+
+    /**
+     * 查找用户
+     */
+    @RequestMapping("/getAccount")
+    public void getAccount(HttpServletRequest request, HttpServletResponse response) {
+        JSONObject object = LibSysUtils.getResultJSON(ResultCode.success);
+        String account = getParameter(request, "account", "");
+        Map<String, String> map = userService.getUserInfoByAccount(account, "avatar", "account", "nickname","user_name","user_email","phone");
+        String pichigh = WkUtil.combineUrl(map.get("avatar"), UploadTypeEnum.AVATAR, true);
+        object.put("account", map.get("account"));
+        object.put("avatar", pichigh);
+        object.put("nickname", map.get("nickname"));
+        if(map.get("user_name")==null) {
+            object.put("user_name", "");
+        }else {
+            object.put("user_name", map.get("user_name"));
+        }
+        if(map.get("user_email")==null) {
+            object.put("user_email", "");
+        }else {
+            object.put("user_email", map.get("user_email"));
+        }
+
+        if(map.get("phone")==null) {
+            object.put("phone", "");
+        }else {
+            object.put("phone", map.get("phone"));
+        }
+        String callback = getParameter(request, "callback");
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+
+    /**
+     * 保存用户 用户名和邮箱
+     */
+    @RequestMapping("/modifyUser")
+    public void modifyUser(HttpServletRequest request, HttpServletResponse response) {
+        JSONObject object = LibSysUtils.getResultJSON(ResultCode.success);
+        String account = getParameter(request, "account", "");
+        String user_name = getParameter(request, "user_name", "");
+        String user_email = getParameter(request, "user_email", "");
+        String phone = getParameter(request, "phone", "");
+        JSONObject jsonObject = new JSONObject();
+        if(!LibSysUtils.isNullOrEmpty(user_name)){
+            jsonObject.put("user_name",user_name);
+        }
+        if(!LibSysUtils.isNullOrEmpty(user_email)){
+            jsonObject.put("user_email",user_email);
+        }
+        if(!LibSysUtils.isNullOrEmpty(phone)){
+            jsonObject.put("phone",phone);
+        }
+        AccountInfo accountInfo = accountInfoMapper.selectByAccountId(account);
+        if(accountInfo!=null){
+            userService.modify(accountInfo.getId(),jsonObject);
+        }else {
+            object.put("message","用户账号不存在~");
+        }
+
+        String callback = getParameter(request, "callback");
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+
+
+    /**
+     * 查找用户
+     */
+    @RequestMapping("/buy")
+    public void buy(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("支付-------------");
+        JSONObject object = LibSysUtils.getResultJSON(ResultCode.success);
+        String account = getParameter(request, "account", "");
+        String user_name = getParameter(request, "user_name", "貴賓");
+        String email = getParameter(request, "email", "9sunmuni@gmail.com");
+        String phone = getParameter(request, "phone", "");
+        String callback = getParameter(request, "callback");
+        String pay_type = getParameter(request, "pay_type","");
+
+        logger.info("支付-------------用户账号"+account);
+        Map<String, String> map = userService.getUserInfoByAccount(account, "user_id", "lang_code");
+        if (map.size() > 0) {
+            String ip = request.getRemoteAddr();
+            int userId = LibSysUtils.toInt(map.get("user_id"));
+            String lang_code = LibSysUtils.toString(map.get("lang_code"));
+            int rechargeId = getParameter(request, "recharge_id", 0);
+            String project_name = getParameter(request, "project_name", "");
+            object = pocketService.buy(userId, rechargeId, ip, project_name, lang_code,user_name,email,pay_type,phone);
+        }
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+
+    /**
+     * 房间内发送消息
+     */
+    @RequestMapping("/sendMsg")
+    public void sendMsg(HttpServletRequest request, HttpServletResponse response) {
+        String access_token = getParameter(request, "access_token");
+        JSONObject result = WkUtil.checkToken(access_token);
+        String callback = getParameter(request, "callback");
+        if (result.optInt("code") == 0) {
+            int user_id = result.optInt("user_id");
+            int live_id = getParameter(request, "live_id", 0);
+            String account = result.optString("account");//发言account
+            String nickname = result.optString("nickname");//nickname
+            String avatar = result.optString("avatar");//avatar
+            int level = result.optInt("level");
+            int vip_level = result.optInt("vip_level");
+
+
+            String lang_code = result.optString("lang_code");
+            String msg = getParameter(request, "msg");
+            boolean is_barrage = getParameter(request, "is_barrage", false);
+            String live_stream_id = WKCache.get_room(live_id, C.WKCacheRoomField.live_stream_id);
+            double api_version = getParameter(request, "api_version", 5.0);
+            result = liveService.sendMsg(user_id, account, nickname, avatar, level, live_id, live_stream_id, msg, is_barrage, lang_code,
+                    api_version, false,vip_level,"");
+        }
+        String outStr = callback + "(" + result.toString() + ")";
+        out(response, outStr);
+    }
+
+
+    /**
+     * 获取二维码信息
+     */
+    @RequestMapping("/qrcode/get")
+    public void getQrcode(HttpServletRequest request, HttpServletResponse response) {
+        String access_token = getParameter(request, "access_token", "");
+        JSONObject object = WkUtil.checkToken(access_token);
+        if (object.optInt("code") == 0) {
+            String luckyNO = object.optString("user_id");
+            switch (luckyNO.length()) {
+                case 1:
+                    luckyNO = "000" + luckyNO;
+                    break;
+                case 2:
+                    luckyNO = "00" + luckyNO;
+                    break;
+                case 3:
+                    luckyNO = "0" + luckyNO;
+                    break;
+                default:
+                    break;
+            }
+            object.put("luckyNO", luckyNO);
+            object.put("sign", access_token);
+            object.put("avatar", WkUtil.combineUrl(LibSysUtils.toString(object.get("avatar")), UploadTypeEnum.AVATAR, true));
+            EventLog log = eventLogMapper.selectByUserId(object.optInt("user_id"));
+            if (log != null) {
+                object.put("event1", log.getEvent1Time() > 0 ? true : false);
+                object.put("event2", log.getEvent2Time() > 0 ? true : false);
+            } else {
+                object.put("event1", false);
+                object.put("event2", false);
+            }
+            object.remove("user_id");
+            object.remove("level");
+            object.remove("lang_code");
+        }
+        String callback = getParameter(request, "callback");
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+
+    @RequestMapping("/qrcode/check")
+    public void checkQrcode(HttpServletRequest request, HttpServletResponse response) {
+        JSONObject object = LibSysUtils.getResultJSON(0);
+        object.put("msg", "验票成功");
+        String account = getParameter(request, "account", "");
+        int event_session = getParameter(request, "event_session", 1);
+        String user_id = WKCache.getUserByAccount(account, "user_id");
+        if (LibSysUtils.toInt(user_id) > 0) {
+            String luckyNO = user_id;
+            EventLog eventLog = eventLogMapper.selectByUserId(LibSysUtils.toInt(user_id));
+            if (eventLog == null) {
+                eventLog = new EventLog();
+                switch (luckyNO.length()) {
+                    case 1:
+                        luckyNO = "000" + luckyNO;
+                        break;
+                    case 2:
+                        luckyNO = "00" + luckyNO;
+                        break;
+                    case 3:
+                        luckyNO = "0" + luckyNO;
+                        break;
+                    default:
+                        break;
+                }
+                eventLog.setUserId(LibSysUtils.toInt(user_id));
+                eventLog.setLuckycode(luckyNO);
+                eventLog.setEvent1Time(0L);
+                eventLog.setEvent2Time(0L);
+                eventLogMapper.insertSelective(eventLog);
+                eventLog = eventLogMapper.selectByUserId(LibSysUtils.toInt(user_id));
+            }
+            if (event_session == 1) {
+                if (eventLog.getEvent1Time() > 0) {
+                    object.put("msg", "验票失败：重复验票");
+                } else {
+                    eventLog.setEvent1Time(LibDateUtils.getLibDateTime());
+                    eventLogMapper.updateByPrimaryKey(eventLog);
+                }
+            }
+            if (event_session == 2) {
+                if (eventLog.getEvent2Time() > 0) {
+                    object.put("msg", "验票失败：重复验票");
+                } else {
+                    eventLog.setEvent2Time(LibDateUtils.getLibDateTime());
+                    eventLogMapper.updateByPrimaryKey(eventLog);
+                }
+            }
+        } else
+            object.put("msg", "验票失败：用户不存在");
+        this.out(response, object.toString());
+    }
+
+    /**
+     * 获取分享链接显示内容
+     */
+    @RequestMapping("/getShareShow")
+    public void getShareShow(HttpServletRequest request, HttpServletResponse response) {
+        String account = getParameter(request, "account", "");
+        String lang_code = getParameter(request, "lang_code", "zh_CN");
+        JSONObject object = LibSysUtils.getResultJSON(ResultCode.success);
+        Map<String, String> map = userService.getUserInfoByAccount(account, "account", "nickname","avatar" );
+        String pichigh = WkUtil.combineUrl(map.get("avatar"), UploadTypeEnum.AVATAR, true);
+        object.put("account", map.get("account"));
+        object.put("nickname", map.get("nickname"));
+        object.put("avatar", map.get("avatar"));
+        String Ogimage = WKCache.get_system_cache(C.WKSystemCacheField.post_like_share_pic_url);
+        if (LibSysUtils.isNullOrEmpty(Ogimage)) {
+            Ogimage = pichigh;
+        }
+        object.put("Ogtitle", LibProperties.getLanguage(lang_code,"weking.lang.post.like.share.title"));
+        object.put("Ogimage", Ogimage);
+        object.put("OgsiteName", "愛絲蜜AppsMe");
+        object.put("Ogdescription", LibProperties.getLanguage(lang_code,"weking.lang.post.like.share.content"));
+//        System.out.println(object.toString());
+        this.out(response, object);
+    }
+
+
+
+    /**
+     * 获取支付列表
+     */
+    @RequestMapping("/getRechargeList")
+    public void getRechargeList(HttpServletRequest request, HttpServletResponse response) {
+        JSONObject object = LibSysUtils.getResultJSON(ResultCode.success);
+        String callback = getParameter(request, "callback");
+        String web_pay = getParameter(request, "web_pay");
+        int type;
+        if (StringUtils.isEmpty(web_pay)) {
+            type = LibSysUtils.toInt(WKCache.get_system_cache(C.WKSystemCacheField.pay_type_official), 11);
+        }else {
+            type=Integer.parseInt(web_pay);
+        }
+        List<RechargeList> list = rechargeListMapper.findByRechargeType(type);
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject;
+        object.put("type",type);
+        for (RechargeList info : list) {
+            jsonObject = new JSONObject();
+            jsonObject.put("id", info.getId());
+            jsonObject.put("buy_num", info.getBuyNum());
+            jsonObject.put("pay_money", info.getPayMoney());
+            jsonArray.add(jsonObject);
+        }
+        object.put("rechargeList",jsonArray);
+        if(type==13) {
+            JSONObject obj = new JSONObject();
+            obj.put("1", "台湾信用卡");
+            obj.put("01", "海外信用卡");
+            obj.put("02", "WebATM");
+            obj.put("03", "ATM");
+         /*   obj.put("05", "7-11 iBon 代碼");
+            obj.put("09", "銀聯");*/
+            object.put("pay_type",obj);
+        }
+
+        if(type==15) {
+            JSONObject Object = new JSONObject();
+            Object.put("2", "信用卡 3D付款");
+            Object.put("3", "超商代碼繳費");
+            Object.put("4", "ATM 虛擬帳號繳款");
+
+            object.put("pay_type",Object);
+        }
+        if(type==17) {
+            JSONObject Object = new JSONObject();
+            Object.put("0", "信用卡");
+            Object.put("1", "銀聯卡");
+            //Object.put("6", "網路 ATM");
+            Object.put("7", "ATM 虛擬帳號繳款");
+
+            object.put("pay_type",Object);
+        }
+
+
+        String result = callback + "(" + object.toString() + ")";
+        this.out(response, result);
+    }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.live.VideoChatMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.live.VideoChat" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="other_id" property="otherId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="start_time" property="startTime" jdbcType="BIGINT" />
+    <result column="end_time" property="endTime" jdbcType="BIGINT" />
+    <result column="cost_price" property="costPrice" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, other_id,type,start_time, end_time,cost_price
+  </sql>
+  <select id="findVideoChatById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_video_chat
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="com.weking.model.live.VideoChat" useGeneratedKeys="true" keyProperty="id">
+    insert into wk_video_chat (id, user_id, other_id, `type`,
+      start_time,user_stream)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{otherId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
+      #{startTime,jdbcType=BIGINT},#{userStream,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateEndTimeById" parameterType="com.weking.model.live.VideoChat" >
+    update wk_video_chat SET end_time = #{endTime,jdbcType=BIGINT},diff_time = #{diffTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER} AND end_time = 0
+  </update>
+</mapper>

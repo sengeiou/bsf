@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+    <!-- 启用注解 -->
+    <context:annotation-config/>
+    <!-- 启动组件扫描，排除@Controller组件，该组件由SpringMVC配置文件扫描 -->
+    <context:component-scan base-package="com.weking.service">
+    </context:component-scan>
+
+    <!-- 1. 数据源 : DriverManagerDataSource -->
+    <!--<bean id="dataSource"-->
+          <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+        <!--<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>-->
+        <!--<property name="url"-->
+                  <!--value="jdbc:mysql://192.168.10.121:3306/stand?useUnicode=true&amp;serverTimezone=GMT&amp;useSSL=false"/>-->
+        <!--<property name="username" value="root"/>-->
+        <!--<property name="password" value="root"/>-->
+    <!--</bean>-->
+
+    <!--数据库连接池-->
+    <!--<bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">-->
+        <!--<property name="driver" value="com.mysql.cj.jdbc.Driver"/>-->
+        <!--<property name="url"-->
+                  <!--value="jdbc:mysql://192.168.10.121:3306/stand?useUnicode=true&amp;serverTimezone=GMT&amp;useSSL=false"/>-->
+        <!--<property name="username" value="root"/>-->
+        <!--<property name="password" value="root"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="dataSource"-->
+          <!--class="org.logicalcobwebs.proxool.ProxoolDataSource">-->
+        <!--<property name="driver" value="com.mysql.cj.jdbc.Driver"/>-->
+        <!--<property name="driverUrl"-->
+                  <!--value="jdbc:mysql://192.168.10.121:3306/appsme3.0?useUnicode=true&amp;serverTimezone=GMT&amp;useSSL=false"/>-->
+        <!--<property name="user" value="root"/>-->
+        <!--<property name="password" value="root"/>-->
+        <!--<property name="alias" value="Pool_dbname" />-->
+        <!--<property name="prototypeCount" value="0" />-->
+        <!--<property name="maximumConnectionCount" value="500" />-->
+        <!--<property name="minimumConnectionCount" value="20" />-->
+        <!--<property name="simultaneousBuildThrottle" value="50" />-->
+        <!--<property name="houseKeepingTestSql" value="select CURRENT_DATE" />-->
+    <!--</bean>-->
+
+    <!-- 基于Druid数据库链接池的数据源Master配置 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/appsme3.0?useUnicode=true&amp;serverTimezone=GMT&amp;useSSL=false" />
+        <property name="username" value="root" />
+        <property name="password" value="root" />
+        <property name="initialSize" value="20" /><!-- 初始化时建立物理连接的个数，缺省值为0 -->
+        <property name="minIdle" value="20" /> <!-- 最小连接池数量 -->
+        <property name="maxActive" value="500" /> <!-- 最大连接池数量，缺省值为8 -->
+        <property name="maxWait" value="60000" /><!-- 获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。 -->
+        <property name="timeBetweenEvictionRunsMillis" value="3600000" /> <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒（3600000:为1小时） -->
+        <property name="minEvictableIdleTimeMillis" value="300000" /> <!-- 配置一个连接在池中最小生存的时间，单位是毫秒(300000:为5分钟) -->
+        <property name="validationQuery" value="select CURRENT_DATE" /> <!-- 用来检测连接是否有效的sql，要求是一个查询语句。如果validationQuery为null，testOnBorrow、testOnReturn、testWhileIdle都不会其作用。 -->
+        <property name="testWhileIdle" value="true" /> <!-- 申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效。建议配置为true，不影响性能，并且保证安全性。-->
+        <property name="testOnBorrow" value="false" /> <!-- 申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。缺省值:true -->
+        <property name="testOnReturn" value="false" /><!-- 归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能。缺省值:false -->
+        <property name="poolPreparedStatements" value="true" /><!-- 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql5.5以下的版本中没有PSCache功能，建议关闭掉。5.5及以上版本有PSCache，建议开启。缺省值:false -->
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="100" /> <!-- 要启用PSCache，必须配置大于0，当大于0时，poolPreparedStatements自动触发修改为true。在Druid中，不会存在Oracle下PSCache占用内存过多的问题，可以把这个数值配置大一些，比如说100。 -->
+        <!-- 解密密码必须要配置的项 -->
+        <!--<property name="filters" value="config" />-->
+        <!--<property name="connectionProperties" value="config.decrypt=true" />-->
+    </bean>
+
+    <!--
+        2. mybatis的SqlSession的工厂: SqlSessionFactoryBean dataSource:引用数据源
+        MyBatis定义数据源,同意加载配置
+    -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="configLocation" value="classpath:config/mybatis-config.xml"/>
+    </bean>
+    <bean id="libJdbcTemplate" class="com.wekingframework.comm.LibJdbcTemplate">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+    </bean>
+
+    <!--
+        3. mybatis自动扫描加载Sql映射文件/接口 : MapperScannerConfigurer sqlSessionFactory
+        basePackage:指定sql映射文件/接口所在的包（自动扫描）
+    -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.weking.mapper"></property>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+    </bean>
+
+    <!--
+        4. 事务管理 : DataSourceTransactionManager dataSource:引用上面定义的数据源
+    -->
+    <bean id="txManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 5. 使用声明式事务
+         transaction-manager：引用上面定义的事务管理器
+     -->
+    <tx:annotation-driven transaction-manager="txManager"/>
+
+    <!-- 配置事务的传播特性  -->
+    <bean id="baseTransactionProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+          abstract="true">
+        <property name="transactionManager" ref="txManager"/>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="add*">PROPAGATION_REQUIRED</prop>
+                <prop key="edit*">PROPAGATION_REQUIRED</prop>
+                <prop key="remove*">PROPAGATION_REQUIRED</prop>
+                <prop key="insert*">PROPAGATION_REQUIRED</prop>
+                <prop key="update*">PROPAGATION_REQUIRED</prop>
+                <prop key="del*">PROPAGATION_REQUIRED</prop>
+                <prop key="select*">readOnly</prop>
+                <prop key="get*">readOnly</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean id="springContextUtil" class="com.weking.core.SpringContextUtil" scope="singleton"></bean>
+
+</beans>

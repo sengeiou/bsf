@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.advertisement.AdvertisementMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.advertisement.Advertisement" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+    <result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+    <result column="width" property="width" jdbcType="DOUBLE" />
+    <result column="height" property="height" jdbcType="DOUBLE" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="adv_type" property="adv_type" jdbcType="SMALLINT" />
+    <result column="en_img_url" property="en_img_url" jdbcType="VARCHAR" />
+    <result column="my_img_url" property="my_img_url" jdbcType="VARCHAR" />
+    <result column="ad_unit_id" property="ad_unit_id" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, img_url, link_url, width, height,title,type,adv_type,en_img_url,my_img_url,ad_unit_id
+  </sql>
+
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from wk_advertisement
+    where type = #{type,jdbcType=INTEGER} AND project_name = #{project_name} AND enable = 1
+    ORDER  BY sorts DESC
+  </select>
+</mapper>

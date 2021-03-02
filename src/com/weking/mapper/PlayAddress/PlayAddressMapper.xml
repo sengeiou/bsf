@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.PlayAddress.PlayAddressMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.PlayAddress.PlayAddress">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="account" property="account" jdbcType="VARCHAR"/>
+        <result column="rtmpurl" property="rtmpurl" jdbcType="VARCHAR"/>
+        <result column="hlsurl" property="hlsurl" jdbcType="VARCHAR"/>
+        <result column="hdlurl" property="hdlurl" jdbcType="VARCHAR"/>
+        <result column="picurl" property="picurl" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id,account, rtmpurl, hlsurl, hdlurl,picurl
+  </sql>
+
+    <select id="selectByAccount" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_play_address
+        where account = #{account,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertSelective" parameterType="com.weking.model.PlayAddress.PlayAddress">
+        insert into wk_play_address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="account != null">
+                account,
+            </if>
+            <if test="rtmpurl != null">
+                rtmpurl,
+            </if>
+            <if test="hlsurl != null">
+                hlsurl,
+            </if>
+            <if test="hdlurl != null">
+                hdlurl,
+            </if>
+            <if test="picurl != null">
+                picurl,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="account != null">
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="rtmpurl != null">
+                #{rtmpurl,jdbcType=VARCHAR},
+            </if>
+            <if test="hlsurl != null">
+                #{hlsurl,jdbcType=VARCHAR},
+            </if>
+            <if test="hdlurl != null">
+                #{hdlurl,jdbcType=VARCHAR},
+            </if>
+            <if test="picurl != null">
+                #{picurl,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.weking.model.PlayAddress.PlayAddress">
+        update wk_play_address
+        <set>
+            <if test="account != null">
+                account = #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="rtmpurl != null">
+                rtmpurl = #{rtmpurl,jdbcType=VARCHAR},
+            </if>
+            <if test="hlsurl != null">
+                hlsurl = #{hlsurl,jdbcType=VARCHAR},
+            </if>
+            <if test="hdlurl != null">
+                hdlurl = #{hdlurl,jdbcType=VARCHAR},
+            </if>
+            <if test="picurl != null">
+                picurl = #{picurl,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

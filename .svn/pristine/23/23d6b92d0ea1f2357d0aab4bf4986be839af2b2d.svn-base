@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.live.GameCategoryMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.live.GameCategory">
+        <id column="category_id" property="category_id" jdbcType="INTEGER"/>
+        <result column="category_name" property="category_name" jdbcType="VARCHAR"/>
+        <result column="category_url" property="category_url" jdbcType="VARCHAR"/>
+        <result column="is_vertical" property="is_vertical" jdbcType="SMALLINT"/>
+        <result column="enable" property="enable" jdbcType="SMALLINT"/>
+        <result column="sort" property="sort" jdbcType="SMALLINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    category_id, category_name, enable, sort,category_url,is_vertical
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_game_category
+        where category_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="com.weking.model.live.GameCategory">
+    insert into wk_game_category (category_id, category_name, enable,
+      sort,category_url,is_vertical)
+    values (#{category_name,jdbcType=INTEGER}, #{category_name,jdbcType=VARCHAR}, #{enable,jdbcType=SMALLINT},
+      #{sort,jdbcType=SMALLINT}, #{category_url,jdbcType=VARCHAR}, #{is_vertical,jdbcType=SMALLINT})
+  </insert>
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_game_category where enable=1 ORDER BY sort DESC
+    </select>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.chathistory.ChatUserMapper" >
+  <resultMap id="BaseResultMap" type="com.weking.model.chathistory.ChatUser" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="other_id" property="otherId" jdbcType="INTEGER" />
+    <result column="chat_content" property="chatContent" jdbcType="VARCHAR" />
+    <result column="chat_time" property="chatTime" jdbcType="BIGINT" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="pichead_url" property="picheadUrl" jdbcType="VARCHAR" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    user_id, other_id
+  </sql>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wk_chat_user
+    where (user_id = #{userId,jdbcType=INTEGER} AND other_id = #{otherId,jdbcType=INTEGER}) 
+    OR (other_id = #{userId,jdbcType=INTEGER} AND user_id = #{otherId,jdbcType=INTEGER})
+  </select>
+
+  <select id="selectFollowListByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select c.chat_content,c.chat_time,u.nickname,u.pichead_url,u.account,u.level,u.sex,c.state
+     from wk_chat_user c INNER JOIN wk_user_info u ON c.other_id = u.id
+    where user_id = #{userId,jdbcType=INTEGER} AND u.enable = 1 AND EXISTS (SELECT id FROM wk_follow f
+    WHERE f.follow_id=#{userId,jdbcType=INTEGER} AND f.befollow_id = c.other_id)
+  </select>
+
+  <select id="selectNotFollowListByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select c.chat_content,c.chat_time,u.nickname,u.pichead_url,u.account,u.level,u.sex,c.state
+     from wk_chat_user c INNER JOIN wk_user_info u ON c.other_id = u.id
+    where user_id = #{userId,jdbcType=INTEGER} AND u.enable = 1 AND NOT EXISTS (SELECT id FROM wk_follow f
+    WHERE f.follow_id=#{userId,jdbcType=INTEGER} AND f.befollow_id = c.other_id)
+  </select>
+
+  <delete id="deleteByUserId" parameterType="java.lang.Integer" >
+    delete from wk_chat_user
+    where user_id = #{userId,jdbcType=INTEGER} AND other_id = #{otherId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="java.lang.Integer" >
+    insert into wk_chat_user (user_id, other_id,chat_content,chat_time)
+    values (#{userId,jdbcType=INTEGER}, #{otherId,jdbcType=INTEGER},#{chatContent,jdbcType=VARCHAR},#{chatTime,jdbcType=BIGINT})
+  </insert>
+
+  <insert id="insertUserMsg" parameterType="java.lang.Integer" >
+    insert into wk_chat_user (user_id, other_id,chat_content,chat_time)
+    values (#{userId,jdbcType=INTEGER}, #{otherId,jdbcType=INTEGER},#{chatContent,jdbcType=VARCHAR},#{chatTime,jdbcType=BIGINT})
+  </insert>
+
+  <insert id="insertOtherMsg" parameterType="java.lang.Integer" >
+    insert into wk_chat_user (user_id, other_id,chat_content,chat_time)
+    values (#{otherId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},#{chatContent,jdbcType=VARCHAR},#{chatTime,jdbcType=BIGINT})
+  </insert>
+
+  <update id="updateUserMsg" parameterType="java.lang.Integer" >
+    update wk_chat_user SET chat_content = #{chatContent,jdbcType=VARCHAR}, chat_time = #{chatTime,jdbcType=VARCHAR}
+    where user_id = #{userId,jdbcType=INTEGER} AND other_id = #{otherId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateOtherMsg" parameterType="java.lang.Integer" >
+    update wk_chat_user SET chat_content = #{chatContent,jdbcType=VARCHAR}, chat_time = #{chatTime,jdbcType=VARCHAR}
+    where user_id = #{otherId,jdbcType=INTEGER} AND other_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <update id="update" parameterType="java.lang.Integer" >
+    update wk_chat_user SET chat_content = #{chatContent,jdbcType=VARCHAR}, chat_time = #{chatTime,jdbcType=VARCHAR}
+     where (user_id = #{userId,jdbcType=INTEGER} AND other_id = #{otherId,jdbcType=INTEGER}) OR
+     (other_id = #{userId,jdbcType=INTEGER} AND user_id = #{otherId,jdbcType=INTEGER})
+  </update>
+
+  <update id="updateMsgState" parameterType="java.lang.Integer" >
+    update wk_chat_user SET state = 1
+    where user_id = #{otherId,jdbcType=INTEGER} AND other_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

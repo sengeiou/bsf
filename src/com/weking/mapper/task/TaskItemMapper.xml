@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.weking.mapper.task.TaskItemMapper">
+    <resultMap id="BaseResultMap" type="com.weking.model.task.TaskItem">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="describe_task" property="describeTask" jdbcType="VARCHAR"/>
+        <result column="task_number" property="taskNumber" jdbcType="INTEGER"/>
+        <result column="reward_coin" property="rewardCoin" jdbcType="INTEGER"/>
+        <result column="reward_type" property="rewardType" jdbcType="INTEGER"/>
+        <result column="pic_url" property="picUrl" jdbcType="VARCHAR"/>
+        <result column="task_type" property="taskType" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, describe_task, task_number, reward_coin, pic_url,task_type,reward_type
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from wk_task_item
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="getList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM wk_task_item WHERE task_type &lt;> 3
+    </select>
+
+    <select id="getCountTask" resultType="int">
+    SELECT count(1) FROM  wk_task_item WHERE task_type &lt;> 3
+  </select>
+
+    <select id="getLoginTaskList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM wk_task_item WHERE task_type = 3
+    </select>
+
+    <select id="getNumTask" resultType="int">
+    SELECT count(1) FROM  wk_task_item WHERE task_type = #{taskType} AND task_number = #{taskNumber}
+  </select>
+
+    <select id="getListByTaskType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM wk_task_item WHERE task_type = #{task_type} AND reward_type !=0 ORDER BY id ASC
+    </select>
+</mapper>
